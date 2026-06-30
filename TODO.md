@@ -28,3 +28,9 @@
     - 套用：`mediautil.RefineFileNames` 末段統一清理所有檔名（save/相簿/批次/連結）；另於 bot watch 與 user watch 流程清理 → 涵蓋所有下載檔名。
     - 規則：採「底線分隔」風格；編號用的連字號 `-N` 會保留。
     - 單元測試：`strutil/string_test.go`、`mediautil/refine_test.go`（全部通過）。
+
+- [ ] bug：Twitter（parsed 任務）下載完成不顯示檔案路徑
+  - 現象：下載完成訊息僅顯示「處理完成，資源數量: 1\n儲存路徑: [本機1]:」，`儲存路徑` 後方為空。
+  - 原因：單一資源時 `dirPath`/`Task.StorPath` 為空（僅多資源才以 item.Title 建立子目錄），而完成訊息只顯示 `StoragePath()`（目錄），實際檔案存放在 `path.Join(StorPath, resource.Filename)`。
+  - 目標：完成訊息顯示有意義的儲存路徑（單一資源時帶上檔名）。
+  - 驗收：下載一則單張圖片/影片的 Twitter 連結，確認儲存路徑顯示為 `[本機1]:<檔名>`。
