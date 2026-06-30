@@ -37,6 +37,14 @@ Settings are stored per user and apply to all of that user's subsequent save/tra
 The conflict strategy only kicks in for storage backends that can detect the existence of a file. Backends that do not support existence checks will fall back to overwriting.
 {{< /hint >}}
 
+{{< hint warning >}}
+**The conflict strategy currently applies only to Telegram files (media/documents sent directly to the bot).**
+
+Content downloaded via parsers (e.g. Twitter / X and other website links), direct links, yt-dlp, and aria2 tasks are **not affected by the conflict strategy** and always use the "Always rename" behavior: on a name collision the file is auto-numbered as `name_1.ext`, `name_2.ext`, ... — never overwritten, skipped, or prompted.
+
+So even if you set the strategy to `Always overwrite` or `Always skip`, downloads from these sources will still just be renamed.
+{{< /hint >}}
+
 ## `/fnametmpl` — Custom Filename Template
 
 When the filename strategy is set to `Template`, SaveAny-Bot renders each saved file's name using the template configured via `/fnametmpl`.
