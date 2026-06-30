@@ -17,6 +17,7 @@ import (
 	userclient "github.com/krau/SaveAny-Bot/client/user"
 	"github.com/krau/SaveAny-Bot/common/i18n"
 	"github.com/krau/SaveAny-Bot/common/i18n/i18nk"
+	"github.com/krau/SaveAny-Bot/common/utils/strutil"
 	"github.com/krau/SaveAny-Bot/common/utils/tgutil"
 	"github.com/krau/SaveAny-Bot/config"
 	"github.com/krau/SaveAny-Bot/core"
@@ -285,6 +286,9 @@ func listenMediaMessageEvent(ch chan userclient.MediaMessageEvent) {
 				}
 				file.SetName(sb.String())
 			}
+
+			// 清理檔名中的 emoji 與特殊符號
+			file.SetName(strutil.SanitizeFileName(file.Name()))
 
 			// Check if this is a media group and if rules specify NEW-FOR-ALBUM
 			groupID, isGroup := file.Message().GetGroupedID()

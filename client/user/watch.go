@@ -7,6 +7,7 @@ import (
 	"github.com/celestix/gotgproto/dispatcher"
 	"github.com/celestix/gotgproto/ext"
 	"github.com/gotd/td/tg"
+	"github.com/krau/SaveAny-Bot/common/utils/strutil"
 	"github.com/krau/SaveAny-Bot/common/utils/tgutil"
 	"github.com/krau/SaveAny-Bot/pkg/tfile"
 )
@@ -89,6 +90,8 @@ func handleMediaMessage(ctx *ext.Context, update *ext.Update) error {
 	if err != nil {
 		return err
 	}
+	// 清理檔名中的 emoji 與特殊符號
+	file.SetName(strutil.SanitizeFileName(file.Name()))
 	chatId := update.EffectiveChat().GetID()
 	sendMediaMessageEvent(MediaMessageEvent{
 		Ctx:       ctx,

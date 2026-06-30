@@ -82,6 +82,26 @@ func TestRefineFileNames(t *testing.T) {
 		}
 	})
 
+	t.Run("meaningful original name with emoji is sanitized", func(t *testing.T) {
+		f := newFile("⚫️2025最新資訊，最新AI發展&商機!.mp4", 1, "任意說明文字")
+		mediautil.RefineFileNames([]tfile.TGFileMessage{f})
+		if want := "2025最新資訊_最新AI發展_商機.mp4"; f.name != want {
+			t.Errorf("got %q, want %q", f.name, want)
+		}
+	})
+
+	t.Run("numbering hyphen preserved after sanitize", func(t *testing.T) {
+		f1 := newFile("100.jpg", 1, "貓咪#日常")
+		f2 := newFile("200.jpg", 2, "貓咪#日常")
+		mediautil.RefineFileNames([]tfile.TGFileMessage{f1, f2})
+		if f1.name != "貓咪日常-1.jpg" {
+			t.Errorf("f1 got %q, want 貓咪日常-1.jpg", f1.name)
+		}
+		if f2.name != "貓咪日常-2.jpg" {
+			t.Errorf("f2 got %q, want 貓咪日常-2.jpg", f2.name)
+		}
+	})
+
 	t.Run("different texts are not numbered together", func(t *testing.T) {
 		f1 := newFile("100.jpg", 1, "貓咪")
 		f2 := newFile("200.jpg", 2, "狗狗")

@@ -71,6 +71,42 @@ func GenTextFileNameBase(text string, maxRunes int) string {
 	return string(runes)
 }
 
+// SanitizeFileName 清理檔名中的 emoji、標點與其他特殊符號，產生「一般文字」檔名：
+// 保留字母(含 CJK)、數字、連字號(-)與底線(_)，其餘字元(emoji、標點、符號、空白、
+// 控制字元等)一律視為分隔並以底線取代，連續分隔會收斂為單一底線，並去除頭尾底線。
+// 副檔名保留不變。若清理後主檔名為空，則回傳原始檔名以免遺失資訊。
+//
+// 範例：「⚫️2025最新資訊，最新AI發展&商機!.mp4」→「2025最新資訊_最新AI發展_商機.mp4」
+func SanitizeFileName(name string) string {
+	name = strings.TrimSpace(name)
+	if name == "" {
+		return name
+	}
+	ext := filepath.Ext(name)
+	stem := strings.TrimSuffix(name, ext)
+
+	var b strings.Builder
+	prevUnderscore := false
+	for _, r := range stem {
+		switch {
+		case unicode.IsLetter(r) || unicode.IsDigit(r) || r == '-':
+			b.WriteRune(r)
+			prevUnderscore = false
+		default:
+			// 底線本身與其他特殊字元都視為分隔，收斂為單一底線
+			if !prevUnderscore {
+				b.WriteRune('_')
+				prevUnderscore = true
+			}
+		}
+	}
+	cleaned := strings.Trim(b.String(), "_")
+	if cleaned == "" {
+		return name
+	}
+	return cleaned + ext
+}
+
 func ParseIntStrRange(input string, sep string) (int64, int64, error) {
 	parts := strings.Split(input, sep)
 	if len(parts) != 2 {

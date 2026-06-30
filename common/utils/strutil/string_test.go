@@ -192,3 +192,26 @@ func TestGenTextFileNameBase(t *testing.T) {
 		}
 	}
 }
+
+func TestSanitizeFileName(t *testing.T) {
+	tests := []struct {
+		name     string
+		expected string
+	}{
+		{"⚫️2025最新資訊，最新AI發展&商機!.mp4", "2025最新資訊_最新AI發展_商機.mp4"},
+		{"my_report.pdf", "my_report.pdf"},
+		{"可愛貓咪-1.jpg", "可愛貓咪-1.jpg"},
+		{"Hello, World!.txt", "Hello_World.txt"},
+		{"  spaced   name .png", "spaced_name.png"},
+		{"😀😀😀.gif", "😀😀😀.gif"}, // 清理後為空 → 保留原檔名
+		{"123456.png", "123456.png"},
+		{"a___b.mp4", "a_b.mp4"},
+		{"純文字檔名.mp4", "純文字檔名.mp4"},
+		{"", ""},
+	}
+	for _, tt := range tests {
+		if got := strutil.SanitizeFileName(tt.name); got != tt.expected {
+			t.Errorf("SanitizeFileName(%q) = %q, want %q", tt.name, got, tt.expected)
+		}
+	}
+}

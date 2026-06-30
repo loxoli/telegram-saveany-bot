@@ -34,7 +34,8 @@ func IsSupported(media tg.MessageMediaClass) bool {
 // 產生的名稱：取訊息前 16 個純文字字元作為檔名。當同一批次中有多個檔案產生相同
 // 的文字基底名稱時，會依訊息順序加上 "-N" 編號，避免互相覆蓋。
 //
-// 已具有實際意義之原始檔名(例如使用者上傳時的檔名)會保留不變。
+// 已具有實際意義之原始檔名(例如使用者上傳時的檔名)會保留語意，但仍會清理其中的
+// emoji 與特殊符號(見 strutil.SanitizeFileName)。
 func RefineFileNames(files []tfile.TGFileMessage) {
 	type entry struct {
 		file  tfile.TGFileMessage
@@ -79,6 +80,20 @@ func RefineFileNames(files []tfile.TGFileMessage) {
 		})
 		for i, e := range entries {
 			e.file.SetName(fmt.Sprintf("%s-%d%s", e.base, i+1, e.ext))
+		}
+	}
+
+	// 最後統一清理所有檔名中的 emoji 與特殊符號(含未被改名的原始檔名)
+	for _, f := range files {
+		if f == nil {
+			continue
+		}
+		name := f.Name()
+		if name == "" {
+			continue
+		}
+		if cleaned := strutil.SanitizeFileName(name); cleaned != name {
+			f.SetName(cleaned)
 		}
 	}
 }
