@@ -4,9 +4,11 @@ import (
 	"crypto/md5"
 	"encoding/hex"
 	"fmt"
+	"path/filepath"
 	"regexp"
 	"strconv"
 	"strings"
+	"unicode"
 
 	"github.com/duke-git/lancet/v2/slice"
 )
@@ -28,6 +30,45 @@ func ExtractTagsFromText(text string) []string {
 		}
 	}
 	return slice.Compact(tags)
+}
+
+// meaninglessNameRe 匹配自動產生、無實際語意的檔名(忽略副檔名)，例如:
+//   - "123456"          純數字 ID
+//   - "photo_123456"    照片 ID
+//   - "123456_ck8b1q2"  id_xid 形式
+var meaninglessNameRe = regexp.MustCompile(`^(?:photo_)?\d+(?:_[a-zA-Z0-9]+)?$`)
+
+// IsMeaninglessFileName 判斷檔名是否為「無意義」的自動產生名稱(純數字/ID 樣式)，
+// 例如 "123456.png"、"photo_123.jpg"、"123_ck8b1q2.mp4"。副檔名不列入判斷。
+// 空字串亦視為無意義。
+func IsMeaninglessFileName(name string) bool {
+	name = strings.TrimSpace(name)
+	if name == "" {
+		return true
+	}
+	base := strings.TrimSuffix(name, filepath.Ext(name))
+	if base == "" {
+		return true
+	}
+	return meaninglessNameRe.MatchString(base)
+}
+
+// GenTextFileNameBase 從 text 取出至多 maxRunes 個「純文字」字元(字母與數字，
+// 含 CJK)作為檔名基底，會略過空白、標點、emoji 等符號。若找不到可用字元則回傳空字串。
+func GenTextFileNameBase(text string, maxRunes int) string {
+	if maxRunes <= 0 {
+		return ""
+	}
+	runes := make([]rune, 0, maxRunes)
+	for _, r := range text {
+		if unicode.IsLetter(r) || unicode.IsDigit(r) {
+			runes = append(runes, r)
+			if len(runes) >= maxRunes {
+				break
+			}
+		}
+	}
+	return string(runes)
 }
 
 func ParseIntStrRange(input string, sep string) (int64, int64, error) {

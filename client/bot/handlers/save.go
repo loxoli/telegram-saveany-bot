@@ -148,7 +148,7 @@ func handleBatchSave(ctx *ext.Context, update *ext.Update, args []string) error 
 		if !supported {
 			continue
 		}
-		file, err := tfile.FromMediaMessage(media, tctx.Raw, msg, tfile.WithNameIfEmpty(tgutil.GenFileNameFromMessage(*msg)))
+		file, err := tfile.FromMediaMessage(media, tctx.Raw, msg, tfile.WithNameIfEmpty(tgutil.GenContentlessFileName(*msg)))
 		if err != nil {
 			log.FromContext(ctx).Errorf("Failed to get file from message: %s", err)
 			continue
@@ -165,6 +165,7 @@ func handleBatchSave(ctx *ext.Context, update *ext.Update, args []string) error 
 		}
 		files = append(files, file)
 	}
+	mediautil.RefineFileNames(files)
 	if len(files) == 0 {
 		ctx.Reply(update, ext.ReplyTextString(i18n.T(i18nk.BotMsgCommonErrorNoSavableMessagesInRange)), nil)
 		return dispatcher.EndGroups

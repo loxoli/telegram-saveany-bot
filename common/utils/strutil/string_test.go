@@ -146,3 +146,49 @@ func TestParseArgsRespectQuotes(t *testing.T) {
 		})
 	}
 }
+
+func TestIsMeaninglessFileName(t *testing.T) {
+	tests := []struct {
+		name     string
+		expected bool
+	}{
+		{"", true},
+		{"123456.png", true},
+		{"123456", true},
+		{"photo_123456.jpg", true},
+		{"123456_ck8b1q2a.mp4", true},
+		{"987654321.mp4", true},
+		{".jpg", true},
+		{"my_report.pdf", false},
+		{"IMG_2024.jpg", false},
+		{"初音ミク.png", false},
+		{"report123.pdf", false},
+		{"123abc.png", false},
+	}
+	for _, tt := range tests {
+		if got := strutil.IsMeaninglessFileName(tt.name); got != tt.expected {
+			t.Errorf("IsMeaninglessFileName(%q) = %v, want %v", tt.name, got, tt.expected)
+		}
+	}
+}
+
+func TestGenTextFileNameBase(t *testing.T) {
+	tests := []struct {
+		text     string
+		maxRunes int
+		expected string
+	}{
+		{"這是一段測試文字內容範例會被截斷的部分", 16, "這是一段測試文字內容範例會被截斷"},
+		{"  Hello, World! 你好 ", 16, "HelloWorld你好"},
+		{"#初音ミク #miku16th", 16, "初音ミクmiku16th"},
+		{"😀😀😀", 16, ""},
+		{"", 16, ""},
+		{"abc", 0, ""},
+		{"a b c d e", 3, "abc"},
+	}
+	for _, tt := range tests {
+		if got := strutil.GenTextFileNameBase(tt.text, tt.maxRunes); got != tt.expected {
+			t.Errorf("GenTextFileNameBase(%q, %d) = %q, want %q", tt.text, tt.maxRunes, got, tt.expected)
+		}
+	}
+}

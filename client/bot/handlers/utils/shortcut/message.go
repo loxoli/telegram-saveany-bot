@@ -59,6 +59,7 @@ func GetFileFromMessageWithReply(ctx *ext.Context, update *ext.Update, message *
 		})), nil)
 		return nil, nil, dispatcher.EndGroups
 	}
+	mediautil.RefineFileNames([]tfile.TGFileMessage{file})
 	return replied, file, nil
 }
 
@@ -155,6 +156,7 @@ func GetFilesFromUpdateLinkMessageWithReplyEdit(ctx *ext.Context, update *ext.Up
 		editReplied(i18n.T(i18nk.BotMsgCommonErrorNoSavableFilesFound, nil), nil)
 		return nil, nil, nil, dispatcher.EndGroups
 	}
+	mediautil.RefineFileNames(files)
 	return replied, files, editReplied, nil
 }
 

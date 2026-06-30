@@ -3,6 +3,8 @@ package mediautil
 import (
 	"context"
 	"fmt"
+	"path/filepath"
+	"sort"
 	"strings"
 	"text/template"
 	"time"
@@ -16,12 +18,68 @@ import (
 	"github.com/krau/SaveAny-Bot/pkg/tfile"
 )
 
+// filenameTextMaxRunes 由訊息文字產生檔名時擷取的純文字字元數上限。
+const filenameTextMaxRunes = 16
+
 func IsSupported(media tg.MessageMediaClass) bool {
 	switch media.(type) {
 	case *tg.MessageMediaDocument, *tg.MessageMediaPhoto:
 		return true
 	default:
 		return false
+	}
+}
+
+// RefineFileNames 將「無意義」的自動產生檔名(純數字/ID 樣式)優化為由訊息文字
+// 產生的名稱：取訊息前 16 個純文字字元作為檔名。當同一批次中有多個檔案產生相同
+// 的文字基底名稱時，會依訊息順序加上 "-N" 編號，避免互相覆蓋。
+//
+// 已具有實際意義之原始檔名(例如使用者上傳時的檔名)會保留不變。
+func RefineFileNames(files []tfile.TGFileMessage) {
+	type entry struct {
+		file  tfile.TGFileMessage
+		base  string
+		ext   string
+		msgID int
+	}
+	groups := make(map[string][]*entry)
+	for _, f := range files {
+		if f == nil {
+			continue
+		}
+		msg := f.Message()
+		if msg == nil {
+			continue
+		}
+		if !strutil.IsMeaninglessFileName(f.Name()) {
+			continue
+		}
+		text := strings.TrimSpace(msg.GetMessage())
+		if text == "" {
+			continue
+		}
+		base := strutil.GenTextFileNameBase(text, filenameTextMaxRunes)
+		if base == "" {
+			continue
+		}
+		ext := filepath.Ext(f.Name())
+		if ext == "" {
+			ext = tgutil.ExtFromMedia(msg.Media)
+		}
+		groups[base] = append(groups[base], &entry{file: f, base: base, ext: ext, msgID: msg.GetID()})
+	}
+	for _, entries := range groups {
+		if len(entries) == 1 {
+			e := entries[0]
+			e.file.SetName(e.base + e.ext)
+			continue
+		}
+		sort.SliceStable(entries, func(i, j int) bool {
+			return entries[i].msgID < entries[j].msgID
+		})
+		for i, e := range entries {
+			e.file.SetName(fmt.Sprintf("%s-%d%s", e.base, i+1, e.ext))
+		}
 	}
 }
 
@@ -56,13 +114,13 @@ func TfileOptions(ctx context.Context, user *database.User, message *tg.Message)
 	case fnamest.Template.String():
 		if user.FilenameTemplate == "" {
 			log.FromContext(ctx).Warnf("empty filename template")
-			fnameOpt = tfile.WithNameIfEmpty(tgutil.GenFileNameFromMessage(*message))
+			fnameOpt = tfile.WithNameIfEmpty(tgutil.GenContentlessFileName(*message))
 			break
 		}
 		tmpl, err := template.New("filename").Parse(user.FilenameTemplate)
 		if err != nil {
 			log.FromContext(ctx).Errorf("failed to parse filename template: %s", err)
-			fnameOpt = tfile.WithNameIfEmpty(tgutil.GenFileNameFromMessage(*message))
+			fnameOpt = tfile.WithNameIfEmpty(tgutil.GenContentlessFileName(*message))
 			break
 		}
 		data := BuildFilenameTemplateData(message)
@@ -70,12 +128,14 @@ func TfileOptions(ctx context.Context, user *database.User, message *tg.Message)
 		err = tmpl.Execute(&sb, data)
 		if err != nil {
 			log.FromContext(ctx).Errorf("failed to execute filename template: %s", err)
-			fnameOpt = tfile.WithNameIfEmpty(tgutil.GenFileNameFromMessage(*message))
+			fnameOpt = tfile.WithNameIfEmpty(tgutil.GenContentlessFileName(*message))
 			break
 		}
 		fnameOpt = tfile.WithName(sb.String())
 	default:
-		fnameOpt = tfile.WithNameIfEmpty(tgutil.GenFileNameFromMessage(*message))
+		// 預設策略：保留具意義的原始檔名，其餘維持無意義名稱，
+		// 交由 RefineFileNames 依訊息文字優化。
+		fnameOpt = tfile.WithNameIfEmpty(tgutil.GenContentlessFileName(*message))
 	}
 	opts = append(opts, fnameOpt, tfile.WithMessage(message))
 	return opts

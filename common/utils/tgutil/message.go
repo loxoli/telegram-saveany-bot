@@ -23,27 +23,36 @@ import (
 	"github.com/rs/xid"
 )
 
+// ExtFromMedia 依媒體類型推斷副檔名(含前導點)，無法判斷時回傳空字串。
+func ExtFromMedia(media tg.MessageMediaClass) string {
+	switch media := media.(type) {
+	case *tg.MessageMediaDocument:
+		doc, ok := media.Document.AsNotEmpty()
+		if !ok {
+			return ""
+		}
+		mmt := mimetype.Lookup(doc.MimeType)
+		if mmt == nil || mmt.Extension() == "" {
+			return ""
+		}
+		return mmt.Extension()
+	case *tg.MessageMediaPhoto:
+		return ".jpg"
+	}
+	return ""
+}
+
+// GenContentlessFileName 為訊息產生一個唯一但無語意的檔名(id_xid 形式)，
+// 作為訊息無可用文字時的後備名稱。回傳的名稱會被 strutil.IsMeaninglessFileName 視為無意義。
+func GenContentlessFileName(message tg.Message) string {
+	return fmt.Sprintf("%d_%s%s", message.GetID(), xid.New().String(), ExtFromMedia(message.Media))
+}
+
 // generate a file name from the message content and media type
 //
 // it will never return an empty string
 func GenFileNameFromMessage(message tg.Message) string {
-	ext := func(media tg.MessageMediaClass) string {
-		switch media := media.(type) {
-		case *tg.MessageMediaDocument:
-			doc, ok := media.Document.AsNotEmpty()
-			if !ok {
-				return ""
-			}
-			mmt := mimetype.Lookup(doc.MimeType)
-			if mmt == nil || mmt.Extension() == "" {
-				return ""
-			}
-			return mmt.Extension()
-		case *tg.MessageMediaPhoto:
-			return ".jpg"
-		}
-		return ""
-	}(message.Media)
+	ext := ExtFromMedia(message.Media)
 	text := strings.TrimSpace(message.GetMessage())
 	if text == "" {
 		return fmt.Sprintf("%d_%s%s", message.GetID(), xid.New().String(), ext)
