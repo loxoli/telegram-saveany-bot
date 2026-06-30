@@ -1,5 +1,7 @@
 package parsed
 
+import "path"
+
 type TaskInfo interface {
 	TaskID() string
 	Site() string
@@ -12,7 +14,14 @@ type TaskInfo interface {
 	StoragePath() string
 }
 
+// StoragePath 回傳要顯示給使用者的儲存路徑。
+// 單一資源時 StorPath 通常為空（僅多資源才以 item.Title 建立子目錄），
+// 實際檔案存放在 path.Join(StorPath, resource.Filename)，
+// 因此單一資源時帶上檔名，避免完成訊息僅顯示空路徑。
 func (t *Task) StoragePath() string {
+	if len(t.item.Resources) == 1 {
+		return path.Join(t.StorPath, t.item.Resources[0].Filename)
+	}
 	return t.StorPath
 }
 func (t *Task) TotalResources() int64 {
