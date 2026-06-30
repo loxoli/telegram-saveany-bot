@@ -18,7 +18,7 @@ import (
 )
 
 type Storage interface {
-	// Init 只应该在创建存储时调用一次
+	// Init 只應該在建立儲存時呼叫一次
 	Init(ctx context.Context, cfg storcfg.StorageConfig) error
 	Type() storenum.StorageType
 	Name() string
@@ -31,13 +31,13 @@ type StorageCannotStream interface {
 	CannotStream() string
 }
 
-// StorageListable 表示支持列举目录内容的存储
+// StorageListable 表示支援列舉目錄內容的儲存
 type StorageListable interface {
 	Storage
 	ListFiles(ctx context.Context, dirPath string) ([]storagetypes.FileInfo, error)
 }
 
-// StorageReadable 表示支持读取文件内容的存储
+// StorageReadable 表示支援讀取檔案內容的儲存
 type StorageReadable interface {
 	Storage
 	OpenFile(ctx context.Context, filePath string) (io.ReadCloser, int64, error)

@@ -25,15 +25,15 @@ func TestExtractTagsFromText(t *testing.T) {
 			expected: []string{"創作百合"},
 		},
 		{
-			text:     `#創作百合 #原创`,
-			expected: []string{"創作百合", "原创"},
+			text:     `#創作百合 #原創`,
+			expected: []string{"創作百合", "原創"},
 		},
 		{
 			text:     `プラニャ　#ブルアカ`,
 			expected: []string{"ブルアカ"},
 		},
 		{
-			text:     `原神是一款#开放世界#冒险游戏，由中国著名游戏公司#miHoYo开发。`,
+			text:     `原神是一款#開放世界#冒險遊戲，由中國著名遊戲公司#miHoYo開發。`,
 			expected: []string{},
 		},
 	}
@@ -107,8 +107,8 @@ func TestParseArgsRespectQuotes(t *testing.T) {
 	}{
 		{
 			name:  "simple split",
-			input: `/rule add FILENAME-REGEX (?i)\.(mp4|mkv)$ "我的 Alist" /视频`,
-			want:  []string{"/rule", "add", "FILENAME-REGEX", "(?i)\\.(mp4|mkv)$", "我的 Alist", "/视频"},
+			input: `/rule add FILENAME-REGEX (?i)\.(mp4|mkv)$ "我的 Alist" /影片`,
+			want:  []string{"/rule", "add", "FILENAME-REGEX", "(?i)\\.(mp4|mkv)$", "我的 Alist", "/影片"},
 		},
 		{
 			name:  "escaped quotes",

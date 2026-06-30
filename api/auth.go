@@ -9,16 +9,16 @@ import (
 	"github.com/krau/SaveAny-Bot/config"
 )
 
-// tokenContextKey 用于在 context 中存储 token
+// tokenContextKey 用於在 context 中儲存 token
 type tokenContextKey struct{}
 
-// AuthMiddleware 返回认证中间件
+// AuthMiddleware 回傳認證中間件
 func AuthMiddleware() func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			cfg := config.C().API
 
-			// 从请求头获取 token
+			// 從請求標頭取得 token
 			authHeader := r.Header.Get("Authorization")
 			if authHeader == "" {
 				WriteError(w, http.StatusUnauthorized, "unauthorized", "missing authorization header")
@@ -34,13 +34,13 @@ func AuthMiddleware() func(http.Handler) http.Handler {
 
 			token := parts[1]
 
-			// 验证 token
+			// 驗證 token
 			if subtle.ConstantTimeCompare([]byte(token), []byte(cfg.Token)) != 1 {
 				WriteError(w, http.StatusUnauthorized, "unauthorized", "invalid token")
 				return
 			}
 
-			// 将 token 添加到 context
+			// 將 token 加入 context
 			ctx := context.WithValue(r.Context(), tokenContextKey{}, token)
 			next.ServeHTTP(w, r.WithContext(ctx))
 		})

@@ -1,16 +1,16 @@
 # SaveAnyBot Plugins
 
-SaveAnyBot 可通过插件扩展功能, 目前仅支持 Parser (解析器)插件.
+SaveAnyBot 可透過插件擴充功能, 目前僅支援 Parser (解析器) 插件.
 
 ## Parser
 
-解析器为 SaveAnyBot 提供了处理非 Telegram 文件的能力, 例如下载其他网站的图片或视频.
+解析器為 SaveAnyBot 提供了處理非 Telegram 檔案的能力, 例如下載其他網站的圖片或影片.
 
-当前解析器接口定义如下:
+當前解析器介面定義如下:
 
 ```go
 type Parser interface {
-	CanHandle(url string) bool // 判断是否能处理给定的 URL
+	CanHandle(url string) bool // 判斷是否能處理給定的 URL
 	Parse(ctx context.Context, url string) (*Item, error) // 解析 URL, 返回 Item
 }
 
@@ -40,23 +40,23 @@ type Item struct {
 
 ### Write a Parser Plugin
 
-解析器插件可使用 JavaScript 编写, SaveAnyBot 使用 [goja](https://github.com/dop251/goja) 提供运行时, 并向其中注入了以下全局函数或对象:
+解析器插件可使用 JavaScript 撰寫, SaveAnyBot 使用 [goja](https://github.com/dop251/goja) 提供執行環境, 並向其中注入了以下全域函式或物件:
 
-- **registerParser**: 用于注册解析器, 每个插件必须调用此函数以注册
-- **console.log**: 调用 go 端的 logger 打印日志
-- **ghttp**: 提供 HTTP 请求功能
-- **playwright**: 提供基于 Playwright 的浏览器自动化请求功能
+- **registerParser**: 用於註冊解析器, 每個插件必須呼叫此函式以進行註冊
+- **console.log**: 呼叫 go 端的 logger 印出日誌
+- **ghttp**: 提供 HTTP 請求功能
+- **playwright**: 提供基於 Playwright 的瀏覽器自動化請求功能
 
-插件需要提供元数据 `metadata` 并实现 `canHandle` 和 `parse` 两个函数, 最后调用 `registerParser` 注册解析器.
+插件需要提供元資料 `metadata` 並實作 `canHandle` 和 `parse` 兩個函式, 最後呼叫 `registerParser` 註冊解析器.
 
 #### Plugin Metadata
 
-插件元数据是一个 JavaScript 对象:
+插件元資料是一個 JavaScript 物件:
 
 ```js
 const metadata = {
-    version: "1.0.0", // 插件兼容版本号, 必须提供, 其他字段可选
-    name: "Example Parser", // 插件名称
+    version: "1.0.0", // 插件相容版本號, 必須提供, 其他欄位可選
+    name: "Example Parser", // 插件名稱
     description: "A parser for example links", // 插件描述
     author: "Krau", // 插件作者
 }
@@ -64,7 +64,7 @@ const metadata = {
 
 #### canHandle Function
 
-`canHandle`: `canHandle(url: string): boolean` , 用于判断当前解析器能否解析给定的 URL, 返回布尔值, 例如:
+`canHandle`: `canHandle(url: string): boolean` , 用於判斷當前解析器能否解析給定的 URL, 返回布林值, 例如:
 
 ```js
 const canHandle = function (url) {
@@ -72,33 +72,33 @@ const canHandle = function (url) {
 };
 ```
 
-这将让 SaveAnyBot 在遇到包含 `youtube.com/watch?v` 的 url 时调用当前解析器的 `parse`.
+這將讓 SaveAnyBot 在遇到包含 `youtube.com/watch?v` 的 url 時呼叫當前解析器的 `parse`.
 
 #### parse Function
 
-`parse`: `parse(url: string): Item` , 是核心解析函数, 用于解析给定的 url, 返回一个 `Item` 对象, 例:
+`parse`: `parse(url: string): Item` , 是核心解析函式, 用於解析給定的 url, 返回一個 `Item` 物件, 例:
 
 ```js
 const parse = function (url) {
     var result = {
-        // 元信息
+        // 元資訊
         site: "YouTube",
         url: url,
-        title: "测试 YouTube 视频",
-        author: "某视频作者",
-        description: "这是一个测试视频",
+        title: "測試 YouTube 影片",
+        author: "某影片作者",
+        description: "這是一個測試影片",
         tags: ["test", "youtube"],
-        // 资源(可下载的文件)列表
+        // 資源(可下載的檔案)清單
         resources: [
             {
-                url: "https://example.com/video1.mp4", // 文件直链
-                filename: "somevideo.mp4", // 文件名
-                mime_type: "video/mp4", // 文件 MIME 类型, 可选
-                extension: "mp4", // 文件扩展名, 可选
-                size: 100 * 1024 * 1024, // 文件大小, 单位为字节, 未知可以设置为 0
-                hash: {}, // 文件哈希, 可选, 格式为 {"md5": "xxx", "sha256": "xxx"} 等
-                headers: {}, // 下载文件时所需的 HTTP 头部, 可选, 例如 {"User-Agent": "Mozilla/5.0"}
-                extra: {} // 额外信息, 可选, 可以包含任何自定义数据
+                url: "https://example.com/video1.mp4", // 檔案直鏈
+                filename: "somevideo.mp4", // 檔案名稱
+                mime_type: "video/mp4", // 檔案 MIME 類型, 可選
+                extension: "mp4", // 檔案副檔名, 可選
+                size: 100 * 1024 * 1024, // 檔案大小, 單位為位元組, 未知可設為 0
+                hash: {}, // 檔案雜湊, 可選, 格式為 {"md5": "xxx", "sha256": "xxx"} 等
+                headers: {}, // 下載檔案時所需的 HTTP 標頭, 可選, 例如 {"User-Agent": "Mozilla/5.0"}
+                extra: {} // 額外資訊, 可選, 可以包含任何自訂資料
             },
             {
                 url: "https://example.com/picture1.png",
@@ -119,9 +119,9 @@ const parse = function (url) {
 
 #### HTTP Requests
 
-使用 `ghttp` 对象以发起 HTTP 请求.
+使用 `ghttp` 物件以發起 HTTP 請求.
 
-**ghttp.get(url: string)** 发起 GET 请求, 当成功时返回响应体字符串, 失败时或响应状态码不为 200 时返回一个包含 `error` 字段的对象:
+**ghttp.get(url: string)** 發起 GET 請求, 當成功時返回回應內容字串, 失敗時或回應狀態碼不為 200 時返回一個包含 `error` 欄位的物件:
 
 ```js
 const response = ghttp.get("https://example.com/someapi");
@@ -133,21 +133,21 @@ if (response.status) {
 }
 ```
 
-**ghttp.getJSON(url: string)** 发起 GET 请求并将响应体解析为 JSON 对象, 始终返回以下对象:
+**ghttp.getJSON(url: string)** 發起 GET 請求並將回應內容解析為 JSON 物件, 始終返回以下物件:
 
 ```js
 {
-	data?: any, // 当请求成功且响应体为合法 JSON 时包含解析后的数据
-	error?: string, // 当请求失败或响应状态码不为 200 时包含错误信息
-	status?: number, // 响应状态码, 仅当响应状态码不为 200 时包含
+	data?: any, // 當請求成功且回應內容為合法 JSON 時包含解析後的資料
+	error?: string, // 當請求失敗或回應狀態碼不為 200 時包含錯誤訊息
+	status?: number, // 回應狀態碼, 僅當回應狀態碼不為 200 時包含
 }
 ```
 
 #### Playwright
 
-使用 `playwright` 对象以发起基于浏览器的请求.
+使用 `playwright` 物件以發起基於瀏覽器的請求.
 
-**playwright.get(url: string)** 发起基于浏览器的 GET 请求, 当成功时返回响应体字符串, 失败时或响应状态码不为 200 时返回一个包含 `error` 字段的对象:
+**playwright.get(url: string)** 發起基於瀏覽器的 GET 請求, 當成功時返回回應內容字串, 失敗時或回應狀態碼不為 200 時返回一個包含 `error` 欄位的物件:
 
 ```js
 const response = playwright.get("https://example.com/somepage");
@@ -158,7 +158,7 @@ if (response.error) {
 
 ---
 
-最后别忘了调用 `registerParser` 注册解析器:
+最後別忘了呼叫 `registerParser` 註冊解析器:
 
 ```js
 registerParser({
@@ -170,6 +170,6 @@ registerParser({
 
 ### Examples
 
-请先查看 [example_parser_basic.js](./example_parser_basic.js) 了解最简示例解析器插件的实现.
+請先查看 [example_parser_basic.js](./example_parser_basic.js) 瞭解最簡示範解析器插件的實作.
 
-然后查看 [example_parser_danbooru.js](./example_parser_danbooru.js) , 这是一个可直接使用的插件, 用于解析 Danbooru 图片页面并提取图片资源.
+然後查看 [example_parser_danbooru.js](./example_parser_danbooru.js) , 這是一個可直接使用的插件, 用於解析 Danbooru 圖片頁面並提取圖片資源.

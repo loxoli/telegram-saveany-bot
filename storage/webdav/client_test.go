@@ -37,7 +37,7 @@ func TestMkDirAndExists(t *testing.T) {
 	client := NewClient(server.URL, "", "", nil)
 	ctx := context.Background()
 
-	testpaths := []string{"testdir", "testdir/subdir", "testdir/子目录", "/testdir/测试路径/测试路径2"}
+	testpaths := []string{"testdir", "testdir/subdir", "testdir/子目錄", "/testdir/測試路徑/測試路徑2"}
 	for _, p := range testpaths {
 		exists, err := client.Exists(ctx, p)
 		if err != nil {
@@ -92,7 +92,7 @@ func TestWriteFile(t *testing.T) {
 		},
 		{
 			remotePath: "unicode.txt",
-			content:    "测试",
+			content:    "測試",
 		},
 	}
 
@@ -101,33 +101,33 @@ func TestWriteFile(t *testing.T) {
 			dir := path.Dir(tc.remotePath)
 			if dir != "." {
 				if err := client.MkDir(ctx, dir); err != nil {
-					t.Fatalf("创建目录 %s 失败: %v", dir, err)
+					t.Fatalf("建立目錄 %s 失敗: %v", dir, err)
 				}
 			}
 
 			if err := client.WriteFile(ctx, tc.remotePath, strings.NewReader(tc.content)); err != nil {
-				t.Fatalf("写入文件 %s 失败: %v", tc.remotePath, err)
+				t.Fatalf("寫入檔案 %s 失敗: %v", tc.remotePath, err)
 			}
 
 			localPath := filepath.Join(tempDir, tc.remotePath)
 			data, err := os.ReadFile(localPath)
 			if err != nil {
-				t.Fatalf("读取文件 %s 失败: %v", localPath, err)
+				t.Fatalf("讀取檔案 %s 失敗: %v", localPath, err)
 			}
 			if string(data) != tc.content {
-				t.Fatalf("文件内容不匹配: got %s, want %s", string(data), tc.content)
+				t.Fatalf("檔案內容不匹配: got %s, want %s", string(data), tc.content)
 			}
 
 			appended := tc.content + " Overwritten."
 			if err := client.WriteFile(ctx, tc.remotePath, strings.NewReader(appended)); err != nil {
-				t.Fatalf("覆盖写入文件 %s 失败: %v", tc.remotePath, err)
+				t.Fatalf("覆蓋寫入檔案 %s 失敗: %v", tc.remotePath, err)
 			}
 			data, err = os.ReadFile(localPath)
 			if err != nil {
-				t.Fatalf("读取覆盖后的文件 %s 失败: %v", localPath, err)
+				t.Fatalf("讀取覆蓋後的檔案 %s 失敗: %v", localPath, err)
 			}
 			if string(data) != appended {
-				t.Fatalf("文件覆盖后的内容不匹配: got %s, want %s", string(data), appended)
+				t.Fatalf("檔案覆蓋後的內容不匹配: got %s, want %s", string(data), appended)
 			}
 		})
 	}

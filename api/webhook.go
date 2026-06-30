@@ -10,18 +10,18 @@ import (
 	"github.com/charmbracelet/log"
 )
 
-// webhookClient Webhook 客户端
+// webhookClient Webhook 用戶端
 var webhookClient = &http.Client{
 	Timeout: 30 * time.Second,
 }
 
-// SendWebhook 发送 Webhook 回调
+// SendWebhook 發送 Webhook 回呼
 func SendWebhook(ctx context.Context, payload *WebhookPayload) {
 	if payload == nil || payload.TaskID == "" {
 		return
 	}
 
-	// 获取任务信息以获取 webhook URL
+	// 取得任務資訊以取得 webhook URL
 	info, ok := GetTask(payload.TaskID)
 	if !ok || info.Webhook == "" {
 		return
@@ -44,7 +44,7 @@ func SendWebhook(ctx context.Context, payload *WebhookPayload) {
 			return
 		}
 
-		// 重试 3 次
+		// 重試 3 次
 		for i := range 3 {
 			req, err := http.NewRequestWithContext(context.Background(), http.MethodPost, webhookURL, bytes.NewBuffer(payloadBytes))
 			if err != nil {

@@ -102,7 +102,7 @@ func newJSParser(vm *goja.Runtime, canHandleFunc, parseFunc goja.Value, metadata
 	return p
 }
 
-// 加载指定文件夹下的所有 JS 解析器插件
+// 載入指定資料夾下的所有 JS 解析器插件
 func LoadPlugins(ctx context.Context, dir string) error {
 	entries, err := os.ReadDir(dir)
 	if err != nil {

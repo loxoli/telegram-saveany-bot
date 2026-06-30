@@ -9,9 +9,9 @@ default, message, template
 type FnameST string
 
 var fnameSTDisplay = map[FnameST]map[string]string{
-	Default:  {"zh-CN": "默认", "en": "Default"},
-	Message:  {"zh-CN": "优先从消息生成", "en": "Gen From Msg First"},
-	Template: {"zh-CN": "自定义模板", "en": "Template"},
+	Default:  {"zh-CN": "預設", "en": "Default"},
+	Message:  {"zh-CN": "優先從訊息產生", "en": "Gen From Msg First"},
+	Template: {"zh-CN": "自訂模板", "en": "Template"},
 }
 
 func GetDisplay(st FnameST, lang string) string {

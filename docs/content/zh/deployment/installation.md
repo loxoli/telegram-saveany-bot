@@ -1,28 +1,28 @@
 ---
-title: "安装与更新"
+title: "安裝與更新"
 ---
 
-# 安装与更新
+# 安裝與更新
 
-## 从预编译文件部署(推荐)
+## 從預編譯檔案部署（推薦）
 
-在 [Release](https://github.com/krau/SaveAny-Bot/releases) 页面下载对应平台的二进制文件.
+在 [Release](https://github.com/krau/SaveAny-Bot/releases) 頁面下載對應平台的二進位檔案.
 
-在解压后目录新建 `config.toml` 文件, 参考 [配置说明](../configuration) 编辑配置文件
+在解壓縮後的目錄中新增 `config.toml` 檔案, 參考 [設定說明](../configuration) 編輯設定檔
 
-运行:
+執行:
 
 ```bash
 chmod +x saveany-bot
 ./saveany-bot
 ```
 
-### 进程守护
+### 程序守護
 
 {{< tabs "daemon" >}}
-{{< tab "systemd (常规 Linux)" >}}
+{{< tab "systemd (常規 Linux)" >}}
 
-创建文件 <code>/etc/systemd/system/saveany-bot.service</code> 并写入以下内容:
+建立檔案 <code>/etc/systemd/system/saveany-bot.service</code> 並寫入以下內容:
 
 {{< codeblock >}}
 [Unit]
@@ -39,7 +39,7 @@ Restart=always
 WantedBy=multi-user.target
 {{< /codeblock >}}
 
-设为开机启动并启动服务:
+設為開機啟動並啟動服務:
 
 {{< codeblock >}}
 systemctl enable --now saveany-bot
@@ -49,9 +49,9 @@ systemctl enable --now saveany-bot
 
 {{< tab "procd (OpenWrt)" >}}
 
-<h4>添加开机自启动服务</h4>
+<h4>新增開機自動啟動服務</h4>
 
-创建文件 <code>/etc/init.d/saveanybot</code> ，参考 <a href="https://github.com/krau/SaveAny-Bot/blob/main/docs/confs/wrt_init" target="_blank">wrt_init</a> 并自行修改:
+建立檔案 <code>/etc/init.d/saveanybot</code> ，參考 <a href="https://github.com/krau/SaveAny-Bot/blob/main/docs/confs/wrt_init" target="_blank">wrt_init</a> 並自行修改:
 
 {{< codeblock >}}
 #!/bin/sh /etc/rc.common
@@ -80,23 +80,23 @@ reload() {
 
 {{< /codeblock >}}
 
-赋予权限:
+賦予權限:
 
 {{< codeblock >}}
 chmod +x /etc/init.d/saveanybot
 {{< /codeblock >}}
 
-然后将文件复制到 <code>/etc/rc.d</code> 并重命名为 <code>S99saveanybot</code>, 同样赋予权限:
+然後將檔案複製到 <code>/etc/rc.d</code> 並重新命名為 <code>S99saveanybot</code>, 同樣賦予權限:
 
 {{< codeblock >}}
 chmod +x /etc/rc.d/S99saveanybot
 {{< /codeblock >}}
 
-<h4>添加快捷指令</h4>
+<h4>新增快捷指令</h4>
 
-创建文件 <code>/usr/bin/sabot</code> ，参考 <a href="https://github.com/krau/SaveAny-Bot/blob/main/docs/confs/wrt_bin" target="_blank">wrt_bin</a>  并自行修改，注意此处文件编码仅支持 ANSI 936 .
+建立檔案 <code>/usr/bin/sabot</code> ，參考 <a href="https://github.com/krau/SaveAny-Bot/blob/main/docs/confs/wrt_bin" target="_blank">wrt_bin</a>  並自行修改，注意此處檔案編碼僅支援 ANSI 936 .
 
-随后赋予权限:
+隨後賦予權限:
 
 {{< codeblock >}}
 chmod +x /usr/bin/sabot
@@ -112,9 +112,9 @@ chmod +x /usr/bin/sabot
 
 ### Docker Compose
 
-下载 [docker-compose.yml](https://github.com/krau/SaveAny-Bot/blob/main/docker-compose.yml) 文件, 在同目录下新建 `config.toml` 文件, 参考 [config.example.toml](https://github.com/krau/SaveAny-Bot/blob/main/config.example.toml) 编辑配置文件.
+下載 [docker-compose.yml](https://github.com/krau/SaveAny-Bot/blob/main/docker-compose.yml) 檔案, 在同目錄下新增 `config.toml` 檔案, 參考 [config.example.toml](https://github.com/krau/SaveAny-Bot/blob/main/config.example.toml) 編輯設定檔.
 
-启动:
+啟動:
 
 ```bash
 docker compose up -d
@@ -130,21 +130,21 @@ docker run -d --name saveany-bot \
 ```
 
 {{< hint info >}}
-关于 docker 镜像的变体版本
+關於 docker 映像的變體版本
 <br />
 <ul>
-<li>默认版本: 包含所有功能和依赖, 体积较大. 如果没有特殊需要, 请使用此版本</li>
-<li>micro: 精简版本, 去除部分可选依赖, 体积较小</li>
-<li>pico: 极简版本, 仅包含核心功能, 体积最小</li>
+<li>預設版本: 包含所有功能和依賴, 體積較大. 如果沒有特殊需求, 請使用此版本</li>
+<li>micro: 精簡版本, 去除部分選用依賴, 體積較小</li>
+<li>pico: 極簡版本, 僅包含核心功能, 體積最小</li>
 </ul>
-你可以根据需要, 通过指定不同的标签来拉取合适的版本, 例如: <code>ghcr.io/krau/saveany-bot:micro</code>
+您可以根據需要, 透過指定不同的標籤來拉取合適的版本, 例如: <code>ghcr.io/krau/saveany-bot:micro</code>
 <br />
-关于变体版本的更详细的区别, 请参考项目根目录下的 Dockerfile 文件.
+關於變體版本更詳細的差異, 請參考專案根目錄下的 Dockerfile 檔案.
 {{< /hint >}}
 
 ## 更新
 
-若使用预编译二进制文件部署, 使用以下 CLI 命令更新:
+若使用預編譯二進位檔案部署, 使用以下 CLI 命令更新:
 
 ```bash
 ./saveany-bot up

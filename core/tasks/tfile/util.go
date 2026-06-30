@@ -1,7 +1,7 @@
 package tfile
 
 var progressUpdatesLevels = []struct {
-	size        int64 // 文件大小阈值
+	size        int64 // 檔案大小閾值
 	stepPercent int   // 每多少 % 更新一次
 }{
 	{10 << 20, 100},

@@ -1,90 +1,90 @@
 ---
-title: "命令行子命令"
+title: "命令列子命令"
 weight: 21
 ---
 
-# 命令行子命令
+# 命令列子命令
 
-除了直接运行 `./saveany-bot` (不带子命令) 启动 Telegram Bot 外, 这个二进制文件还提供两个把本地文件上传到存储后端的辅助子命令: `upload` (一次性) 和 `watch` (持续监听).
+除了直接執行 `./saveany-bot` (不帶子命令) 啟動 Telegram Bot 外, 這個二進位檔案還提供兩個將本機檔案上傳到儲存後端的輔助子命令: `upload` (一次性) 和 `watch` (持續監聽).
 
-这些子命令会读取与 Bot 相同的 `config.toml`, 初始化数据库和缓存, 然后执行任务. 它们**不会**启动 Telegram Bot 本身, 但 `telegram` 类型的存储会在需要上传时临时启动 Bot 客户端来执行上传.
+這些子命令會讀取與 Bot 相同的 `config.toml`, 初始化資料庫和快取, 然後執行任務. 它們**不會**啟動 Telegram Bot 本身, 但 `telegram` 類型的儲存會在需要上傳時臨時啟動 Bot 客戶端來執行上傳.
 
-## `upload` — 上传单个文件
+## `upload` — 上傳單一檔案
 
 ```
-saveany-bot upload -f <文件> -s <存储名> [-d <目录>] [--no-progress]
+saveany-bot upload -f <檔案> -s <儲存名稱> [-d <目錄>] [--no-progress]
 ```
 
-参数:
+參數:
 
-| 参数 | 必填 | 说明 |
+| 參數 | 必填 | 說明 |
 |---|---|---|
-| `-f, --file` | 是 | 待上传的本地文件路径 |
-| `-s, --storage` | 是 | 目标存储名 (必须存在于 `config.toml`) |
-| `-d, --dir` | 否 | 存储中的目标目录, 默认使用存储的 `base_path` |
-| `--no-progress` | 否 | 关闭终端进度条 |
+| `-f, --file` | 是 | 待上傳的本機檔案路徑 |
+| `-s, --storage` | 是 | 目標儲存名稱 (必須存在於 `config.toml`) |
+| `-d, --dir` | 否 | 儲存中的目標目錄, 預設使用儲存的 `base_path` |
+| `--no-progress` | 否 | 關閉終端機進度條 |
 
-示例:
+範例:
 
 ```bash
-# 上传文件到 "MyAlist" 的默认目录
+# 上傳檔案到 "MyAlist" 的預設目錄
 ./saveany-bot upload -f ./movie.mp4 -s MyAlist
 
-# 上传到指定子目录
+# 上傳到指定子目錄
 ./saveany-bot upload -f ./movie.mp4 -s MyAlist -d movies/2026
 
-# 通过 Telegram 存储上传并关闭进度条
+# 透過 Telegram 儲存上傳並關閉進度條
 ./saveany-bot upload -f ./photo.jpg -s MyChannel --no-progress
 ```
 
-## `watch` — 监听目录并自动上传
+## `watch` — 監聽目錄並自動上傳
 
-`watch` 子命令持续监听一个本地目录, 将新建或修改的文件上传到存储后端, 并保留相对监听根目录的子目录结构.
+`watch` 子命令持續監聽一個本機目錄, 將新建或修改的檔案上傳到儲存後端, 並保留相對監聽根目錄的子目錄結構.
 
 ```
-saveany-bot watch -p <路径> -s <存储名> [-d <目录>] [选项]
+saveany-bot watch -p <路徑> -s <儲存名稱> [-d <目錄>] [選項]
 ```
 
-参数:
+參數:
 
-| 参数 | 默认值 | 说明 |
+| 參數 | 預設值 | 說明 |
 |---|---|---|
-| `-p, --path` | *(必填)* | 要监听的本地目录 |
-| `-s, --storage` | *(必填)* | 目标存储名 |
-| `-d, --dir` | 存储的 `base_path` | 存储中的目标目录 |
-| `-r, --recursive` | `false` | 是否递归监听子目录 |
-| `--overwrite` | `false` | 覆盖存储上已有的文件, 而非跳过 |
-| `--initial-scan` | `false` | 启动时将目录中已存在的文件也上传 |
-| `--debounce` | `2s` | 文件最后一次写入后, 等待多久再上传 |
-| `--upload-workers` | `config.workers` | 并发上传数 |
-| `--retry-delay` | `3s` | 上传重试之间的延迟 |
+| `-p, --path` | *(必填)* | 要監聽的本機目錄 |
+| `-s, --storage` | *(必填)* | 目標儲存名稱 |
+| `-d, --dir` | 儲存的 `base_path` | 儲存中的目標目錄 |
+| `-r, --recursive` | `false` | 是否遞迴監聽子目錄 |
+| `--overwrite` | `false` | 覆蓋儲存上已有的檔案, 而非略過 |
+| `--initial-scan` | `false` | 啟動時將目錄中已存在的檔案也上傳 |
+| `--debounce` | `2s` | 檔案最後一次寫入後, 等待多久再上傳 |
+| `--upload-workers` | `config.workers` | 並行上傳數 |
+| `--retry-delay` | `3s` | 上傳重試之間的延遲 |
 
 {{< hint info >}}
-写入完成检测: 监听器会按文件做防抖处理, 仅当文件大小在一个 debounce 窗口内保持不变时才上传, 因此不会上传未写完的半成品文件.
+寫入完成偵測: 監聽器會按檔案做防抖動處理, 僅當檔案大小在一個 debounce 視窗內保持不變時才上傳, 因此不會上傳未寫完的半成品檔案.
 <br />
-若某文件在上传过程中又被修改, 它会在当前上传完成后再上传一次, 而不是被重复排队.
+若某檔案在上傳過程中又被修改, 它會在當前上傳完成後再上傳一次, 而不是被重複排入佇列.
 {{< /hint >}}
 
-示例:
+範例:
 
 ```bash
-# 递归监听 ./inbox 并且把新文件上传到 "MyAlist"
+# 遞迴監聽 ./inbox 並且把新檔案上傳到 "MyAlist"
 ./saveany-bot watch -p ./inbox -s MyAlist -r
 
-# 自定义目标目录并覆盖已有文件
+# 自訂目標目錄並覆蓋已有檔案
 ./saveany-bot watch -p ./inbox -s MyAlist -d backup --overwrite
 
-# 启动时把 ./inbox 中已有的内容也一并上传
+# 啟動時把 ./inbox 中已有的內容也一併上傳
 ./saveany-bot watch -p ./inbox -s MyAlist --initial-scan
 ```
 
-### 行为说明
+### 行為說明
 
-- 相对子目录结构会被保留: 以 `--path ./inbox` 为例, 写入 `./inbox/sub/file.txt` 的文件会被上传到 `<目标目录>/sub/file.txt`.
-- `watch` 会一直运行直到被中断 (如 `Ctrl-C` / `SIGINT`), 退出前会等待所有进行中的上传完成.
-- 重试次数遵循 `config.toml` 中的全局 `retry` 值, 各次重试之间间隔 `--retry-delay`.
-- `telegram` 类型的存储会自动启动 Bot 客户端来执行上传.
+- 相對子目錄結構會被保留: 以 `--path ./inbox` 為例, 寫入 `./inbox/sub/file.txt` 的檔案會被上傳到 `<目標目錄>/sub/file.txt`.
+- `watch` 會一直執行直到被中斷 (如 `Ctrl-C` / `SIGINT`), 退出前會等待所有進行中的上傳完成.
+- 重試次數遵循 `config.toml` 中的全域 `retry` 值, 各次重試之間間隔 `--retry-delay`.
+- `telegram` 類型的儲存會自動啟動 Bot 客戶端來執行上傳.
 
 {{< hint warning >}}
-`watch` 子命令与 Bot 内的 `/watch` 命令 (监听 Telegram 聊天) 无关. 本子命令监听的是**本地文件系统目录**, 不依赖 Telegram.
+`watch` 子命令與 Bot 內的 `/watch` 命令 (監聽 Telegram 聊天室) 無關. 本子命令監聽的是**本機檔案系統目錄**, 不依賴 Telegram.
 {{< /hint >}}

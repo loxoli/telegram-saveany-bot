@@ -27,7 +27,7 @@ import (
 	"github.com/krau/SaveAny-Bot/pkg/tfile"
 )
 
-// 获取消息中的文件并回复等待消息, 返回等待消息, 获取到的文件
+// 取得訊息中的檔案並回覆等待訊息, 回傳等待訊息, 取得到的檔案
 func GetFileFromMessageWithReply(ctx *ext.Context, update *ext.Update, message *tg.Message, tfileopts ...tfile.TGFileOption) (replied *types.Message,
 	file tfile.TGFileMessage, err error,
 ) {
@@ -64,7 +64,7 @@ func GetFileFromMessageWithReply(ctx *ext.Context, update *ext.Update, message *
 
 type EditMessageFunc func(text string, markup tg.ReplyMarkupClass)
 
-// 获取链接中的文件并回复等待消息
+// 取得連結中的檔案並回覆等待訊息
 func GetFilesFromUpdateLinkMessageWithReplyEdit(ctx *ext.Context, update *ext.Update) (replied *types.Message, files []tfile.TGFileMessage, editReplied EditMessageFunc, err error) {
 	logger := log.FromContext(ctx)
 	msgLinks := re.TgMessageLinkRegexp.FindAllString(tgutil.ExtractMessageEntityUrlsText(update.EffectiveMessage.Message), -1)

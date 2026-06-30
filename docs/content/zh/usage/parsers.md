@@ -1,15 +1,15 @@
 ---
-title: "转存 Telegram 之外的文件"
+title: "轉存 Telegram 之外的檔案"
 weight: 9
 ---
 
-# 转存 Telegram 之外的文件
+# 轉存 Telegram 之外的檔案
 
-除了 Telegram 上的文件, Bot 还可通过 JavaScript 插件或内置解析器来支持转存其他网站的文件.
+除了 Telegram 上的檔案, Bot 還可透過 JavaScript 插件或內建解析器來支援轉存其他網站的檔案.
 
-> 查看[贡献解析器](../contribute)文档了解详情
+> 查看[貢獻解析器](../contribute)文件瞭解詳情
 
-只需向 Bot 发送符合解析器要求的链接即可使用, 当前内置的解析器:
+只需向 Bot 傳送符合解析器要求的連結即可使用, 當前內建的解析器:
 
 - Twitter
 - Kemono

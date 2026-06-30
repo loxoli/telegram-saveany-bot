@@ -16,21 +16,21 @@ import (
 	"github.com/krau/SaveAny-Bot/pkg/tfile"
 )
 
-// MessageContext 保存消息和获取它所用的 context
+// MessageContext 保存訊息和取得它所用的 context
 type MessageContext struct {
 	Message *tg.Message
 	Client  *ext.Context
 }
 
-// getClientContext 获取可用的客户端上下文
-// 优先使用 Bot，失败后回退到 Userbot
+// getClientContext 取得可用的用戶端上下文
+// 優先使用 Bot，失敗後退回 Userbot
 func getClientContext() (*ext.Context, error) {
-	// 首先尝试获取 Bot context
+	// 首先嘗試取得 Bot context
 	if botCtx := bot.ExtContext(); botCtx != nil {
 		return botCtx, nil
 	}
 
-	// 回退到 Userbot
+	// 退回 Userbot
 	if uc := userclient.GetCtx(); uc != nil {
 		return uc, nil
 	}
@@ -40,16 +40,16 @@ func getClientContext() (*ext.Context, error) {
 
 // resolveChatID 解析聊天 ID
 func resolveChatID(_ context.Context, idOrUsername string) (int64, error) {
-	// 如果是数字 ID
+	// 如果是數字 ID
 	if id, err := strconv.ParseInt(idOrUsername, 10, 64); err == nil {
-		// 私有频道 ID 需要加上 -100 前缀
+		// 私有頻道 ID 需要加上 -100 前綴
 		if id > 0 {
 			return -1000000000000 - id, nil
 		}
 		return id, nil
 	}
 
-	// 获取可用的客户端上下文
+	// 取得可用的用戶端上下文
 	clientCtx, err := getClientContext()
 	if err != nil {
 		return 0, err
@@ -59,12 +59,12 @@ func resolveChatID(_ context.Context, idOrUsername string) (int64, error) {
 	return tgutil.ParseChatID(clientCtx, idOrUsername)
 }
 
-// ParseMessageLink 解析 Telegram 消息链接
-// 支持格式:
+// ParseMessageLink 解析 Telegram 訊息連結
+// 支援格式:
 // - https://t.me/username/123
 // - https://t.me/c/123456789/123
 // - https://t.me/c/123456789/111/456 (topic id)
-// - https://t.me/username/123?comment=2 (评论)
+// - https://t.me/username/123?comment=2 (評論)
 func ParseMessageLink(ctx context.Context, link string) (int64, int, error) {
 	u, err := url.Parse(link)
 	if err != nil {
@@ -73,11 +73,11 @@ func ParseMessageLink(ctx context.Context, link string) (int64, int, error) {
 	paths := strings.Split(strings.TrimPrefix(u.Path, "/"), "/")
 
 	if cmt := u.Query().Get("comment"); cmt != "" {
-		// 频道评论的消息链接
+		// 頻道評論的訊息連結
 		if len(paths) < 1 {
 			return 0, 0, fmt.Errorf("invalid message link format: %s", link)
 		}
-		// 简化处理：返回错误，提示不支持评论链接
+		// 簡化處理：回傳錯誤，提示不支援評論連結
 		return 0, 0, fmt.Errorf("comment links are not supported")
 	}
 
@@ -126,10 +126,10 @@ func ParseMessageLink(ctx context.Context, link string) (int64, int, error) {
 	return 0, 0, fmt.Errorf("invalid message link format: %s", link)
 }
 
-// getMessageWithContext 通过 ID 获取消息，返回消息和使用的 context
-// 确保消息获取和后续文件创建使用同一个 context
+// getMessageWithContext 透過 ID 取得訊息，回傳訊息和使用的 context
+// 確保訊息取得和後續檔案建立使用同一個 context
 func getMessageWithContext(_ context.Context, chatID int64, msgID int) (*MessageContext, error) {
-	// 首先尝试使用 Bot
+	// 首先嘗試使用 Bot
 	if botCtx := bot.ExtContext(); botCtx != nil {
 		msg, err := tgutil.GetMessageByID(botCtx, chatID, msgID)
 		if err == nil {
@@ -137,7 +137,7 @@ func getMessageWithContext(_ context.Context, chatID int64, msgID int) (*Message
 		}
 	}
 
-	// 回退到 Userbot
+	// 退回 Userbot
 	uc := userclient.GetCtx()
 	if uc == nil {
 		return nil, fmt.Errorf("userbot not initialized and bot cannot access this message")
@@ -151,8 +151,8 @@ func getMessageWithContext(_ context.Context, chatID int64, msgID int) (*Message
 	return &MessageContext{Message: msg, Client: uc}, nil
 }
 
-// getGroupedMessagesWithContext 获取媒体组消息，返回消息列表和使用的 context
-// 确保消息获取和后续文件创建使用同一个 context
+// getGroupedMessagesWithContext 取得媒體群組訊息，回傳訊息列表和使用的 context
+// 確保訊息取得和後續檔案建立使用同一個 context
 func getGroupedMessagesWithContext(ctx *MessageContext, chatID int64) ([]*tg.Message, error) {
 	msg := ctx.Message
 	clientCtx := ctx.Client
@@ -162,19 +162,19 @@ func getGroupedMessagesWithContext(ctx *MessageContext, chatID int64) ([]*tg.Mes
 		return []*tg.Message{msg}, nil
 	}
 
-	// 使用获取原始消息的同一个 client 获取媒体组
+	// 使用取得原始訊息的同一個 client 取得媒體群組
 	msgs, err := tgutil.GetGroupedMessages(clientCtx, chatID, msg)
 	if err != nil || len(msgs) == 0 {
-		// 如果获取失败，至少返回原始消息
+		// 如果取得失敗，至少回傳原始訊息
 		return []*tg.Message{msg}, nil
 	}
 
 	return msgs, nil
 }
 
-// ExtractFilesFromLinks 从消息链接中提取文件
-// 每个文件的处理流程：解析链接 -> 获取消息 -> 获取媒体组 -> 创建文件对象
-// 对于单个文件，全程使用同一个 client context，不会交叉
+// ExtractFilesFromLinks 從訊息連結中提取檔案
+// 每個檔案的處理流程：解析連結 -> 取得訊息 -> 取得媒體群組 -> 建立檔案物件
+// 對於單個檔案，全程使用同一個 client context，不會交叉
 func ExtractFilesFromLinks(ctx context.Context, links []string) ([]tfile.TGFileMessage, error) {
 	logger := log.FromContext(ctx)
 	var files []tfile.TGFileMessage
@@ -185,7 +185,7 @@ func ExtractFilesFromLinks(ctx context.Context, links []string) ([]tfile.TGFileM
 			continue
 		}
 
-		// 验证链接格式
+		// 驗證連結格式
 		if !isValidMessageLink(link) {
 			logger.Errorf("Invalid message link format: %s", link)
 			continue
@@ -197,11 +197,11 @@ func ExtractFilesFromLinks(ctx context.Context, links []string) ([]tfile.TGFileM
 			continue
 		}
 
-		// 解析链接 URL 检查是否有 single 参数
+		// 解析連結 URL 檢查是否有 single 參數
 		u, _ := url.Parse(link)
 		single := u != nil && u.Query().Has("single")
 
-		// 获取消息和使用的 context（Bot 优先，失败回退 Userbot）
+		// 取得訊息和使用的 context（Bot 優先，失敗退回 Userbot）
 		msgCtx, err := getMessageWithContext(ctx, chatID, msgID)
 		if err != nil {
 			logger.Errorf("Failed to get message %d from chat %d: %v", msgID, chatID, err)
@@ -222,10 +222,10 @@ func ExtractFilesFromLinks(ctx context.Context, links []string) ([]tfile.TGFileM
 			continue
 		}
 
-		// 检查是否是媒体组
+		// 檢查是否是媒體群組
 		groupID, isGroup := msg.GetGroupedID()
 		if isGroup && groupID != 0 && !single {
-			// 使用同一个 client context 获取媒体组
+			// 使用同一個 client context 取得媒體群組
 			groupMsgs, err := getGroupedMessagesWithContext(msgCtx, chatID)
 			if err != nil {
 				logger.Errorf("Failed to get grouped messages: %v", err)
@@ -238,7 +238,7 @@ func ExtractFilesFromLinks(ctx context.Context, links []string) ([]tfile.TGFileM
 					if !ok {
 						continue
 					}
-					// 使用获取消息时使用的同一个 client context 创建文件
+					// 使用取得訊息時使用的同一個 client context 建立檔案
 					file, err := tfile.FromMediaMessage(gmedia, clientCtx.Raw, gmsg)
 					if err != nil {
 						logger.Errorf("Failed to create file from media: %v", err)
@@ -250,7 +250,7 @@ func ExtractFilesFromLinks(ctx context.Context, links []string) ([]tfile.TGFileM
 			}
 		}
 
-		// 单个文件 - 使用获取消息时使用的同一个 client context 创建文件
+		// 單個檔案 - 使用取得訊息時使用的同一個 client context 建立檔案
 		file, err := tfile.FromMediaMessage(media, clientCtx.Raw, msg)
 		if err != nil {
 			logger.Errorf("Failed to create file from media: %v", err)
@@ -266,7 +266,7 @@ func ExtractFilesFromLinks(ctx context.Context, links []string) ([]tfile.TGFileM
 	return files, nil
 }
 
-// isValidMessageLink 检查是否是有效的 Telegram 消息链接
+// isValidMessageLink 檢查是否是有效的 Telegram 訊息連結
 func isValidMessageLink(link string) bool {
 	return strings.HasPrefix(link, "https://t.me/") || strings.HasPrefix(link, "http://t.me/")
 }

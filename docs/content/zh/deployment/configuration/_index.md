@@ -1,14 +1,14 @@
 ---
-title: "配置说明"
+title: "設定說明"
 ---
 
-# 配置说明
+# 設定說明
 
-SaveAnyBot 的配置文件使用 toml 格式, 你可以在 [TOML 官方网站](https://toml.io/) 上了解更多关于 toml 的语法.
+SaveAnyBot 的設定檔使用 toml 格式, 您可以在 [TOML 官方網站](https://toml.io/) 上瞭解更多關於 toml 的語法.
 
-SaveAnyBot 需要读取工作目录下的 `config.toml` 文件作为配置文件, 若缺少该文件则会创建默认文件, 并尝试从环境变量中加载配置.
+SaveAnyBot 需要讀取工作目錄下的 `config.toml` 檔案作為設定檔, 若缺少該檔案則會建立預設檔案, 並嘗試從環境變數中載入設定.
 
-以下是一个最简的配置文件示例:
+以下是一個最簡的設定檔範例:
 
 ```toml
 [telegram]
@@ -20,32 +20,32 @@ id = 777000
 blacklist = true
 
 [[storages]]
-name = "本机存储"
+name = "本機儲存"
 type = "local"
 enable = true
 base_path = "./downloads"
 ```
 
-## 详细配置
+## 詳細設定
 
-### 全局配置
+### 全域設定
 
-- `lang`: Bot 使用的语言, 默认为 `zh-CN` (简体中文), 设为 `en` 则使用英语.
-- `stream`: 是否启用 Stream 模式, 默认为 `false`. 启用后 Bot 将直接将文件流式传输到存储端(若存储端支持), 不需要下载到本地
+- `lang`: Bot 使用的語言, 預設為 `zh-CN` (簡體中文), 設為 `en` 則使用英語.
+- `stream`: 是否啟用 Stream 模式, 預設為 `false`. 啟用後 Bot 將直接將檔案串流傳輸到儲存端（若儲存端支援）, 不需要下載到本機
 {{< hint warning >}}
-Stream 模式对于磁盘空间有限的部署环境十分有用, 但也有一些弊端:
+Stream 模式對於磁碟空間有限的部署環境十分有用, 但也有一些缺點:
 <br />
 <ul>
-<li>无法使用多线程从 Telegram 下载文件, 速度较慢.</li>
-<li>网络不稳定时, 任务失败率高.</li>
-<li>无法在中间层对文件进行处理, 例如自动文件类型识别.</li>
-<li>并非支持所有存储端, 不支持的存储端可能会降级为普通模式或无法上传.</li>
+<li>無法使用多執行緒從 Telegram 下載檔案, 速度較慢.</li>
+<li>網路不穩定時, 任務失敗率高.</li>
+<li>無法在中間層對檔案進行處理, 例如自動檔案類型識別.</li>
+<li>並非支援所有儲存端, 不支援的儲存端可能會降級為普通模式或無法上傳.</li>
 </ul>
 {{< /hint >}}
-- `workers`: 同时处理任务数量, 默认为 3
-- `threads`: 下载文件时使用的线程数, 默认为 4. 仅在未启用 Stream 模式时生效.
-- `retry`: 任务失败时的重试次数, 默认为 3.
-- `proxy`: 全局代理配置, 配置后程序内一切网络连接将会尝试使用该代理, 可选.
+- `workers`: 同時處理任務數量, 預設為 3
+- `threads`: 下載檔案時使用的執行緒數, 預設為 4. 僅在未啟用 Stream 模式時生效.
+- `retry`: 任務失敗時的重試次數, 預設為 3.
+- `proxy`: 全域代理設定, 設定後程式內一切網路連接將會嘗試使用該代理, 選用.
 
 ```toml
 lang = "zh-CN"
@@ -56,25 +56,25 @@ retry = 3
 proxy = "socks5://127.0.0.1:7890"
 ```
 
-### Telegram 配置
+### Telegram 設定
 
-- `token`: 你的 Telegram Bot Token, 可以通过 [BotFather](https://t.me/botfather) 创建 Bot 并获取 Token.
-- `app_id`, `app_hash`: Telegram API ID & Hash, 在 [Telegram API](https://my.telegram.org/apps) 创建应用获取, 若不提供则使用默认值.
-- `flood_retry`: Flood 控制重试次数, 默认为 5.
-- `rpc_retry`: RPC 请求重试次数, 默认为 5.
-- `proxy`: 代理配置, 可选.
-  - `enable`: 是否启用代理.
-  - `url`: 代理地址
-- `userbot`: userbot 配置, 可选.
-  - `enable`: 启用 userbot 集成, 需要登录用户账号, 此时请务必使用自己的 api id & hash.
-  - `session`: userbot 会话文件路径, 默认为 `data/usersession.db`.
+- `token`: 您的 Telegram Bot Token, 可以透過 [BotFather](https://t.me/botfather) 建立 Bot 並取得 Token.
+- `app_id`, `app_hash`: Telegram API ID & Hash, 在 [Telegram API](https://my.telegram.org/apps) 建立應用程式取得, 若不提供則使用預設值.
+- `flood_retry`: Flood 控制重試次數, 預設為 5.
+- `rpc_retry`: RPC 請求重試次數, 預設為 5.
+- `proxy`: 代理設定, 選用.
+  - `enable`: 是否啟用代理.
+  - `url`: 代理位址
+- `userbot`: userbot 設定, 選用.
+  - `enable`: 啟用 userbot 整合, 需要登入使用者帳號, 此時請務必使用自己的 api id & hash.
+  - `session`: userbot 會話檔案路徑, 預設為 `data/usersession.db`.
 
 {{< hint warning >}}
-启用 userbot 集成后, bot 可以下载私密频道和群组的文件, 但具有无法避免的账号被封禁的风险.
+啟用 userbot 整合後, bot 可以下載私密頻道和群組的檔案, 但具有無法避免的帳號被封禁的風險.
 <br />
-开启 userbot 集成后第一次启动 bot 时需要通过终端交互输入手机号, 2FA 和验证码.
+開啟 userbot 整合後第一次啟動 bot 時需要透過終端機互動輸入手機號碼、2FA 和驗證碼.
 <br />
-如果你使用 docker 部署, 请使用 -it 参数为容器提供交互式环境, 然后执行登录操作.
+如果您使用 docker 部署, 請使用 -it 參數為容器提供互動式環境, 然後執行登入操作.
 {{< /hint >}}
 
 ```toml
@@ -92,17 +92,17 @@ enable = false
 session = "data/usersession.db"
 ```
 
-### Aria2 配置
+### Aria2 設定
 
-Aria2 是一个强大的下载管理器，支持 HTTP/HTTPS、FTP、BitTorrent 等多种协议。启用后，Bot 可以使用 `/aria2dl` 命令通过 Aria2 下载文件。
+Aria2 是一個強大的下載管理器，支援 HTTP/HTTPS、FTP、BitTorrent 等多種協定。啟用後，Bot 可以使用 `/aria2dl` 命令透過 Aria2 下載檔案。
 
-- `enable`: 是否启用 Aria2 支持，默认为 `false`
-- `url`: Aria2 RPC 地址，通常为 `http://localhost:6800/jsonrpc`
-- `secret`: Aria2 RPC 密钥，如果你在 Aria2 中配置了 `rpc-secret`，需要在此填写
-- `remove_after_transfer`: 转存完成后是否删除 Aria2 下载的本地文件，默认为 `true`
+- `enable`: 是否啟用 Aria2 支援，預設為 `false`
+- `url`: Aria2 RPC 位址，通常為 `http://localhost:6800/jsonrpc`
+- `secret`: Aria2 RPC 金鑰，如果您在 Aria2 中設定了 `rpc-secret`，需要在此填寫
+- `remove_after_transfer`: 轉存完成後是否刪除 Aria2 下載的本機檔案，預設為 `true`
 
 {{< hint info >}}
-Aria2 需要单独安装和运行。你可以参考 [Aria2 官方文档](https://aria2.github.io/) 了解如何安装和配置 Aria2。
+Aria2 需要單獨安裝和執行。您可以參考 [Aria2 官方文件](https://aria2.github.io/) 瞭解如何安裝和設定 Aria2。
 {{< /hint >}}
 
 ```toml
@@ -113,33 +113,33 @@ secret = "your-rpc-secret"
 remove_after_transfer = true
 ```
 
-### yt-dlp 配置
+### yt-dlp 設定
 
-用于配置 `/ytdlp` 命令以及 HTTP API 中 `ytdlp` 任务类型在未传自定义参数时的默认行为.
+用於設定 `/ytdlp` 命令以及 HTTP API 中 `ytdlp` 任務類型在未傳入自訂參數時的預設行為.
 
-- `max_height`: 默认下载的最高视频清晰度 (按高度限制), 如 `1080`, `720`, `480`; `0` 表示不限制 (下载最佳画质). 当设置了 `format` 时此项被忽略.
-- `format`: 直接指定 yt-dlp format 选择表达式, 设置后优先级高于 `max_height`, 例如 `bv*[height<=720]+ba/b`.
-- `recode`: 下载后转封装的视频容器格式 (如 `mp4`), 留空则不转封装.
+- `max_height`: 預設下載的最高影片解析度 (按高度限制), 如 `1080`, `720`, `480`; `0` 表示不限制 (下載最佳畫質). 當設定了 `format` 時此項被忽略.
+- `format`: 直接指定 yt-dlp format 選擇表達式, 設定後優先順序高於 `max_height`, 例如 `bv*[height<=720]+ba/b`.
+- `recode`: 下載後轉封裝的影片容器格式 (如 `mp4`), 留空則不轉封裝.
 
 {{< hint info >}}
-这些默认值仅在使用 `/ytdlp` 命令且未传任何自定义参数时生效. 在命令上传递自定义参数 (或在 API 中传 `flags`) 会覆盖这些默认值.
+這些預設值僅在使用 `/ytdlp` 命令且未傳入任何自訂參數時生效. 在命令中傳入自訂參數 (或在 API 中傳入 `flags`) 會覆蓋這些預設值.
 {{< /hint >}}
 
 ```toml
 [ytdlp]
 max_height = 1080
 format = ""        # 例如 "bv*[height<=720]+ba/b"
-recode = "mp4"     # 留空则不转封装
+recode = "mp4"     # 留空則不轉封裝
 ```
 
-### HTTP API 配置
+### HTTP API 設定
 
-启用后, SaveAny-Bot 会暴露一套 HTTP API, 用于以编程方式创建/查询/取消任务. 完整的接口说明见 [HTTP API](../../usage/api).
+啟用後, SaveAny-Bot 會暴露一套 HTTP API, 用於以程式化方式建立/查詢/取消任務. 完整的介面說明見 [HTTP API](../../usage/api).
 
-- `enable`: 是否启用 HTTP API 服务, 默认为 `false`.
-- `host`: 监听地址, 默认 `0.0.0.0`.
-- `port`: 监听端口, 默认 `8080`.
-- `token`: 鉴权 Token, **强烈建议设置** — 若为空, API 将在无任何鉴权的情况下暴露.
+- `enable`: 是否啟用 HTTP API 服務, 預設為 `false`.
+- `host`: 監聽位址, 預設 `0.0.0.0`.
+- `port`: 監聽連接埠, 預設 `8080`.
+- `token`: 鑑權 Token, **強烈建議設定** — 若為空, API 將在無任何鑑權的情況下暴露.
 
 ```toml
 [api]
@@ -149,68 +149,68 @@ port = 8080
 token = "your-token"
 ```
 
-### 日志配置
+### 日誌設定
 
-- `level`: 日志级别, 可选 `debug`, `info`, `warn`, `error`, `fatal`. 默认为 `info`.
+- `level`: 日誌層級, 可選 `debug`, `info`, `warn`, `error`, `fatal`. 預設為 `info`.
 
 ```toml
 [log]
 level = "info"
 ```
 
-### 存储端列表
+### 儲存端清單
 
-存储端列表用于定义 Bot 支持的存储位置, 每个存储端需要指定名称、类型和相关配置, 使用双中括号语法 `[[storages]]` 定义.
+儲存端清單用於定義 Bot 支援的儲存位置, 每個儲存端需要指定名稱、類型和相關設定, 使用雙中括號語法 `[[storages]]` 定義.
 
-每一个存储端至少需要以下字段:
+每一個儲存端至少需要以下欄位:
 
-- `name`: 存储端名称, 用于在 Bot 中识别, 需要唯一
-- `enable`: 是否启用该存储端, 默认为 `true`
-- `type`: 存储端类型, 目前支持以下类型:
-  - `local`: 本地磁盘
+- `name`: 儲存端名稱, 用於在 Bot 中識別, 需要唯一
+- `enable`: 是否啟用該儲存端, 預設為 `true`
+- `type`: 儲存端類型, 目前支援以下類型:
+  - `local`: 本機磁碟
   - `alist`: Alist
   - `webdav`: WebDAV
-  - `s3`: aws S3 及其他兼容 S3 的服务
-  - `rclone`: 调用 rclone 实现上传
-  - `telegram`: 上传到 Telegram
+  - `s3`: aws S3 及其他相容 S3 的服務
+  - `rclone`: 呼叫 rclone 實現上傳
+  - `telegram`: 上傳到 Telegram
 
-示例, 这是一个包含本地存储和 webdav 存储的配置:
+範例, 這是一個包含本機儲存和 webdav 儲存的設定:
 
 ```toml
 [[storages]]
-name = "本地存储"
+name = "本機儲存"
 type = "local"
 enable = true
-# 以下是 local 类型存储的自定义配置
+# 以下是 local 類型儲存的自訂設定
 base_path = "./downloads"
 
 [[storages]]
 name = "WebDAV"
 type = "webdav"
 enable = true
-# 以下是 webdav 类型存储的自定义配置
+# 以下是 webdav 類型儲存的自訂設定
 url = "https://example.com/webdav"
 base_path = "/path/to/webdav"
 username = "your_username"
 password = "your_password"
 ```
 
-所有存储端的自定义配置项可查看 [存储端配置](./storages) 
+所有儲存端的自訂設定項可查看 [儲存端設定](./storages) 
 
-### 用户列表
+### 使用者清單
 
-用户列表用于定义对存储端的访问控制, 每个用户需要指定 Telegram 上的用户 ID, 使用双中括号语法 `[[users]]` 定义.
+使用者清單用於定義對儲存端的存取控制, 每個使用者需要指定 Telegram 上的使用者 ID, 使用雙中括號語法 `[[users]]` 定義.
 
-- `id`: 用户的 Telegram User ID
-- `storages`: 过滤的存储端列表, 使用存储端名称定义, 默认为白名单模式 (即只允许访问列表中的存储端)
-- `blacklist`: 是否启用黑名单模式, 默认为 `false`. 若启用黑名单模式, 则仅允许访问**没有**在列表中的存储端.
+- `id`: 使用者的 Telegram User ID
+- `storages`: 過濾的儲存端清單, 使用儲存端名稱定義, 預設為白名單模式 (即只允許存取清單中的儲存端)
+- `blacklist`: 是否啟用黑名單模式, 預設為 `false`. 若啟用黑名單模式, 則僅允許存取**不在**清單中的儲存端.
 
-示例, 这是一个包含三个用户的配置, 用户 `123123` 只能访问本地存储, 用户 `456456` 只能访问除 WebDAV 以外的存储, 用户 `789789` 启用黑名单模式但没有指定存储端, 因此可以访问所有存储:
+範例, 這是一個包含三個使用者的設定, 使用者 `123123` 只能存取本機儲存, 使用者 `456456` 只能存取除 WebDAV 以外的儲存, 使用者 `789789` 啟用黑名單模式但沒有指定儲存端, 因此可以存取所有儲存:
 
 ```toml
 [[users]]
 id = 123123
-storages = ["本地存储"]
+storages = ["本機儲存"]
 
 [[users]]
 id = 456456
@@ -223,44 +223,44 @@ storages = []
 blacklist = true
 ```
 
-### 事件触发
+### 事件觸發
 
-事件触发提供了在 Bot 处理任务时根据任务状态执行自定义操作的能力, 目前仅支持任意命令执行. 使用 `[hook.exec]` 配置.
+事件觸發提供了在 Bot 處理任務時根據任務狀態執行自訂操作的能力, 目前僅支援任意命令執行. 使用 `[hook.exec]` 設定.
 
-目前具有以下几种事件类型:
+目前具有以下幾種事件類型:
 
-- `task_before_start`: 任务即将开始前
-- `task_success`: 任务成功完成后
-- `task_fail`: 任务失败后
-- `task_cancel`: 任务被取消后
+- `task_before_start`: 任務即將開始前
+- `task_success`: 任務成功完成後
+- `task_fail`: 任務失敗後
+- `task_cancel`: 任務被取消後
 
-提供的配置值需要为完整的命令行命令, Bot 会在事件发生时执行该命令. 示例:
+提供的設定值需要為完整的命令列命令, Bot 會在事件發生時執行該命令. 範例:
 
 ```toml
 [hook.exec]
-task_before_start = "echo '任务即将开始'"
+task_before_start = "echo '任務即將開始'"
 task_success = "bash /path/to/success_script.sh"
-task_fail = "curl -X POST https://example.com/api/notify -d '任务失败'"
+task_fail = "curl -X POST https://example.com/api/notify -d '任務失敗'"
 task_cancel = "bash /path/to/cancel_script.sh"
 ```
 
 ### 解析器
 
-解析器为 Bot 提供了处理非 Telegram 文件的能力, 例如从其他网站下载文件. 使用 `[parsers]` 配置.
+解析器為 Bot 提供了處理非 Telegram 檔案的能力, 例如從其他網站下載檔案. 使用 `[parsers]` 設定.
 
 ```toml
 [parsers]
-plugin_enable = true # 是否启用解析器插件
-plugin_dirs = ["./plugins"] # 插件目录, 可以是多个目录
+plugin_enable = true # 是否啟用解析器插件
+plugin_dirs = ["./plugins"] # 插件目錄, 可以是多個目錄
 ```
 
-上述两个配置项只用于控制以 JavaScript 编写的解析器插件, Bot 还有内置的使用 Go 实现的解析器, 目前默认开启.
+上述兩個設定項只用於控制以 JavaScript 撰寫的解析器插件, Bot 還有內建的使用 Go 實作的解析器, 目前預設開啟.
 
-### 杂项
+### 雜項
 
 ```toml
-no_clean_cache = false # 是否在退出时不清空缓存文件夹
-# 临时下载文件夹配置
+no_clean_cache = false # 是否在退出時不清空快取資料夾
+# 暫存下載資料夾設定
 [temp]
 base_path = "./cache"
 ```

@@ -5,23 +5,23 @@ weight: 20
 
 # HTTP API
 
-SaveAny-Bot 提供了一套 HTTP API，允许你通过程序化方式创建下载/转存任务、查询任务状态、取消任务等，无需通过 Telegram 操作。
+SaveAny-Bot 提供了一套 HTTP API，允許您透過程式化方式建立下載/轉存任務、查詢任務狀態、取消任務等，無需透過 Telegram 操作。
 
-## 启用 API
+## 啟用 API
 
-在 `config.toml` 中添加或修改以下配置：
+在 `config.toml` 中新增或修改以下設定：
 
 ```toml
 [api]
 enable = true
-host   = "0.0.0.0"   # 监听地址，默认 0.0.0.0
-port   = 8080         # 监听端口，默认 8080
-token  = "your-token" # 鉴权 Token，强烈建议设置
+host   = "0.0.0.0"   # 監聽位址，預設 0.0.0.0
+port   = 8080         # 監聽連接埠，預設 8080
+token  = "your-token" # 鑑權 Token，強烈建議設定
 ```
 
-也可通过环境变量覆盖（前缀 `SAVEANY_`）：
+也可透過環境變數覆蓋（前綴 `SAVEANY_`）：
 
-| 环境变量 | 对应配置项 |
+| 環境變數 | 對應設定項 |
 |---|---|
 | `SAVEANY_API_ENABLE` | `api.enable` |
 | `SAVEANY_API_HOST` | `api.host` |
@@ -29,55 +29,55 @@ token  = "your-token" # 鉴权 Token，强烈建议设置
 | `SAVEANY_API_TOKEN` | `api.token` |
 
 {{< hint warning >}}
-若 `token` 为空，API 服务将**不进行任何鉴权**即可访问，存在安全风险。
+若 `token` 為空，API 服務將**不進行任何鑑權**即可存取，存在安全風險。
 {{< /hint >}}
 
-## 鉴权
+## 鑑權
 
-当配置了 `token` 时，所有 API 请求均需在 HTTP 请求头中携带 Bearer Token：
+當設定了 `token` 時，所有 API 請求均需在 HTTP 請求標頭中攜帶 Bearer Token：
 
 ```
 Authorization: Bearer <your-token>
 ```
 
-鉴权失败时返回 `401`：
+鑑權失敗時返回 `401`：
 
 ```json
 { "error": "unauthorized", "message": "invalid token" }
 ```
 
-## 错误响应格式
+## 錯誤回應格式
 
-所有错误均使用统一的 JSON 格式：
+所有錯誤均使用統一的 JSON 格式：
 
 ```json
 {
   "error":   "error_code",
-  "message": "错误说明"
+  "message": "錯誤說明"
 }
 ```
 
-常见错误码：
+常見錯誤碼：
 
-| 错误码 | HTTP 状态 | 含义 |
+| 錯誤碼 | HTTP 狀態 | 含義 |
 |---|---|---|
-| `unauthorized` | 401 | 鉴权失败 |
-| `method_not_allowed` | 405 | HTTP 方法不正确 |
-| `invalid_request` | 400 | 请求体/参数非法 |
-| `task_creation_failed` | 400 | 任务创建失败 |
-| `task_not_found` | 404 | 任务 ID 不存在 |
-| `cancel_failed` | 500 | 取消任务失败 |
-| `internal_error` | 500 | 服务器内部错误 |
+| `unauthorized` | 401 | 鑑權失敗 |
+| `method_not_allowed` | 405 | HTTP 方法不正確 |
+| `invalid_request` | 400 | 請求內容/參數非法 |
+| `task_creation_failed` | 400 | 任務建立失敗 |
+| `task_not_found` | 404 | 任務 ID 不存在 |
+| `cancel_failed` | 500 | 取消任務失敗 |
+| `internal_error` | 500 | 伺服器內部錯誤 |
 
 ---
 
-## 接口列表
+## 介面清單
 
-### GET /health — 健康检查
+### GET /health — 健康檢查
 
-无需鉴权。
+無需鑑權。
 
-**响应 `200 OK`：**
+**回應 `200 OK`：**
 
 ```json
 { "status": "ok" }
@@ -85,11 +85,11 @@ Authorization: Bearer <your-token>
 
 ---
 
-### GET /api/v1/storages — 列出存储
+### GET /api/v1/storages — 列出儲存空間
 
-返回当前所有已加载的存储后端。
+返回當前所有已載入的儲存後端。
 
-**响应 `200 OK`：**
+**回應 `200 OK`：**
 
 ```json
 {
@@ -102,9 +102,9 @@ Authorization: Bearer <your-token>
 
 ---
 
-### GET /api/v1/task-types — 列出支持的任务类型
+### GET /api/v1/task-types — 列出支援的任務類型
 
-**响应 `200 OK`：**
+**回應 `200 OK`：**
 
 ```json
 {
@@ -122,36 +122,36 @@ Authorization: Bearer <your-token>
 
 ---
 
-### POST /api/v1/tasks — 创建任务
+### POST /api/v1/tasks — 建立任務
 
-**请求头：**
+**請求標頭：**
 
 ```
 Content-Type: application/json
 Authorization: Bearer <token>
 ```
 
-**请求体：**
+**請求內容：**
 
 ```json
 {
-  "type":    "<任务类型>",
-  "storage": "<存储名>",
-  "path":    "<子目录>",
-  "webhook": "<回调URL>",
+  "type":    "<任務類型>",
+  "storage": "<儲存名稱>",
+  "path":    "<子目錄>",
+  "webhook": "<回呼URL>",
   "params":  { }
 }
 ```
 
-| 字段 | 类型 | 必填 | 说明 |
+| 欄位 | 類型 | 必填 | 說明 |
 |---|---|---|---|
-| `type` | string | 是 | 任务类型，见下文 |
-| `storage` | string | 是 | 目标存储名，须与配置中的存储名一致 |
-| `path` | string | 否 | 存储内的子目录路径 |
-| `webhook` | string | 否 | 任务完成/失败时的回调地址 |
-| `params` | object | 是 | 各任务类型的专属参数，见下文 |
+| `type` | string | 是 | 任務類型，見下文 |
+| `storage` | string | 是 | 目標儲存名稱，須與設定中的儲存名稱一致 |
+| `path` | string | 否 | 儲存內的子目錄路徑 |
+| `webhook` | string | 否 | 任務完成/失敗時的回呼位址 |
+| `params` | object | 是 | 各任務類型的專屬參數，見下文 |
 
-**响应 `201 Created`：**
+**回應 `201 Created`：**
 
 ```json
 {
@@ -162,11 +162,11 @@ Authorization: Bearer <token>
 }
 ```
 
-#### 任务类型与 params
+#### 任務類型與 params
 
-##### directlinks — 直接下载链接
+##### directlinks — 直接下載連結
 
-下载一个或多个 HTTP/HTTPS 直链文件。
+下載一個或多個 HTTP/HTTPS 直鏈檔案。
 
 ```json
 {
@@ -182,17 +182,17 @@ Authorization: Bearer <token>
 }
 ```
 
-| params 字段 | 类型 | 必填 | 说明 |
+| params 欄位 | 類型 | 必填 | 說明 |
 |---|---|---|---|
-| `urls` | []string | 是 | 下载地址列表，至少 1 条 |
+| `urls` | []string | 是 | 下載位址清單，至少 1 條 |
 
-##### ytdlp — yt-dlp 视频下载
+##### ytdlp — yt-dlp 影片下載
 
 {{< hint warning >}}
-需要在系统中安装 yt-dlp。
+需要在系統中安裝 yt-dlp。
 {{< /hint >}}
 
-通过 yt-dlp 下载视频/音频，支持 YouTube、Bilibili 等 1000+ 网站。
+透過 yt-dlp 下載影片/音訊，支援 YouTube、Bilibili 等 1000+ 個網站。
 
 ```json
 {
@@ -206,18 +206,18 @@ Authorization: Bearer <token>
 }
 ```
 
-| params 字段 | 类型 | 必填 | 说明 |
+| params 欄位 | 類型 | 必填 | 說明 |
 |---|---|---|---|
-| `urls` | []string | 是 | 媒体链接列表，至少 1 条 |
-| `flags` | []string | 否 | 额外的 yt-dlp 命令行参数 |
+| `urls` | []string | 是 | 媒體連結清單，至少 1 條 |
+| `flags` | []string | 否 | 額外的 yt-dlp 命令列參數 |
 
-##### aria2 — Aria2 下载
+##### aria2 — Aria2 下載
 
 {{< hint warning >}}
-需要在配置文件中启用并配置 Aria2 RPC。
+需要在設定檔中啟用並設定 Aria2 RPC。
 {{< /hint >}}
 
-通过 Aria2 下载管理器下载文件，支持 HTTP/HTTPS、FTP、BitTorrent（磁力链接、种子）等协议。
+透過 Aria2 下載管理器下載檔案，支援 HTTP/HTTPS、FTP、BitTorrent（磁力連結、種子）等協定。
 
 ```json
 {
@@ -231,14 +231,14 @@ Authorization: Bearer <token>
 }
 ```
 
-| params 字段 | 类型 | 必填 | 说明 |
+| params 欄位 | 類型 | 必填 | 說明 |
 |---|---|---|---|
-| `urls` | []string | 是 | 下载地址列表，至少 1 条 |
-| `options` | map[string]string | 否 | Aria2 下载选项 |
+| `urls` | []string | 是 | 下載位址清單，至少 1 條 |
+| `options` | map[string]string | 否 | Aria2 下載選項 |
 
-##### parseditem — 解析器下载
+##### parseditem — 解析器下載
 
-将 URL 交由已注册的 JS 插件或内置解析器处理后下载。
+將 URL 交由已註冊的 JS 插件或內建解析器處理後下載。
 
 ```json
 {
@@ -251,22 +251,22 @@ Authorization: Bearer <token>
 }
 ```
 
-| params 字段 | 类型 | 必填 | 说明 |
+| params 欄位 | 類型 | 必填 | 說明 |
 |---|---|---|---|
-| `url` | string | 是 | 待解析的页面 URL |
+| `url` | string | 是 | 待解析的頁面 URL |
 
-若没有任何解析器能处理该 URL，则返回 `400 task_creation_failed`。
+若沒有任何解析器能處理該 URL，則返回 `400 task_creation_failed`。
 
-##### tgfiles — Telegram 消息文件下载
+##### tgfiles — Telegram 訊息檔案下載
 
-通过 Telegram 消息链接下载文件。支持以下链接格式：
+透過 Telegram 訊息連結下載檔案。支援以下連結格式：
 
-- `https://t.me/username/123` — 公开频道/群组
-- `https://t.me/c/123456789/123` — 私有频道（数字 ID）
-- `https://t.me/c/123456789/111/456` — 话题消息
-- `https://t.me/username/111/456` — 用户名频道下的话题消息
+- `https://t.me/username/123` — 公開頻道/群組
+- `https://t.me/c/123456789/123` — 私有頻道（數字 ID）
+- `https://t.me/c/123456789/111/456` — 話題訊息
+- `https://t.me/username/111/456` — 使用者名稱頻道下的話題訊息
 
-若消息属于媒体组（相册），默认下载整组文件。在链接末尾追加 `?single` 可强制只下载单条消息的文件。
+若訊息屬於媒體組（相簿），預設下載整組檔案。在連結末尾追加 `?single` 可強制只下載單條訊息的檔案。
 
 ```json
 {
@@ -282,15 +282,15 @@ Authorization: Bearer <token>
 }
 ```
 
-| params 字段 | 类型 | 必填 | 说明 |
+| params 欄位 | 類型 | 必填 | 說明 |
 |---|---|---|---|
-| `message_links` | []string | 是 | Telegram 消息链接列表，至少 1 条 |
+| `message_links` | []string | 是 | Telegram 訊息連結清單，至少 1 條 |
 
-##### tphpics — Telegraph 文章图片下载
+##### tphpics — Telegraph 文章圖片下載
 
-下载 Telegra.ph 文章中的所有图片。
+下載 Telegra.ph 文章中的所有圖片。
 
-支持的链接前缀：`https://telegra.ph/`、`http://telegra.ph/`、`https://telegraph.co/`、`http://telegraph.co/`
+支援的連結前綴：`https://telegra.ph/`、`http://telegra.ph/`、`https://telegraph.co/`、`http://telegraph.co/`
 
 ```json
 {
@@ -303,16 +303,16 @@ Authorization: Bearer <token>
 }
 ```
 
-| params 字段 | 类型 | 必填 | 说明 |
+| params 欄位 | 類型 | 必填 | 說明 |
 |---|---|---|---|
 | `telegraph_url` | string | 是 | Telegra.ph 文章 URL |
 
-##### transfer — 存储间文件传输
+##### transfer — 儲存間檔案傳輸
 
-在两个存储后端之间直接传输文件，无需经过 Telegram。源存储须支持列举（list）和读取（read）操作。
+在兩個儲存後端之間直接傳輸檔案，無需經過 Telegram。來源儲存須支援列舉（list）和讀取（read）操作。
 
 {{< hint info >}}
-`transfer` 任务中，顶层的 `storage` 字段仍然必须填写（用于通过参数校验），但实际使用的存储由 `params` 中的 `source_storage` 和 `target_storage` 决定。
+`transfer` 任務中，頂層的 `storage` 欄位仍然必須填寫（用於通過參數驗證），但實際使用的儲存由 `params` 中的 `source_storage` 和 `target_storage` 決定。
 {{< /hint >}}
 
 ```json
@@ -328,20 +328,20 @@ Authorization: Bearer <token>
 }
 ```
 
-| params 字段 | 类型 | 必填 | 说明 |
+| params 欄位 | 類型 | 必填 | 說明 |
 |---|---|---|---|
-| `source_storage` | string | 是 | 源存储名 |
-| `source_path` | string | 是 | 源存储中的路径，须包含至少一个文件 |
-| `target_storage` | string | 是 | 目标存储名 |
-| `target_path` | string | 是 | 目标存储中的路径 |
+| `source_storage` | string | 是 | 來源儲存名稱 |
+| `source_path` | string | 是 | 來源儲存中的路徑，須包含至少一個檔案 |
+| `target_storage` | string | 是 | 目標儲存名稱 |
+| `target_path` | string | 是 | 目標儲存中的路徑 |
 
 ---
 
-### GET /api/v1/tasks — 列出所有任务
+### GET /api/v1/tasks — 列出所有任務
 
-返回所有 API 创建的任务（仅在内存中保留，重启后清空）。
+返回所有 API 建立的任務（僅在記憶體中保留，重新啟動後清空）。
 
-**响应 `200 OK`：**
+**回應 `200 OK`：**
 
 ```json
 {
@@ -367,63 +367,63 @@ Authorization: Bearer <token>
 }
 ```
 
-`progress` 字段仅在 `total_bytes > 0` 时出现。`error` 字段仅在有错误时出现。
+`progress` 欄位僅在 `total_bytes > 0` 時出現。`error` 欄位僅在有錯誤時出現。
 
 ---
 
-### GET /api/v1/tasks/{task_id} — 查询任务
+### GET /api/v1/tasks/{task_id} — 查詢任務
 
-**路径参数：** `task_id` — 创建任务时返回的 ID。
+**路徑參數：** `task_id` — 建立任務時返回的 ID。
 
-**响应 `200 OK`：** 同上列表中的单个任务对象。
+**回應 `200 OK`：** 同上清單中的單一任務物件。
 
-**错误响应：**
-- `400 invalid_request` — 路径中未提供 task_id
-- `404 task_not_found` — 任务不存在
+**錯誤回應：**
+- `400 invalid_request` — 路徑中未提供 task_id
+- `404 task_not_found` — 任務不存在
 
 ---
 
-### DELETE /api/v1/tasks/{task_id} — 取消任务
+### DELETE /api/v1/tasks/{task_id} — 取消任務
 
-**路径参数：** `task_id`
+**路徑參數：** `task_id`
 
-**响应 `200 OK`：**
+**回應 `200 OK`：**
 
 ```json
 { "message": "task cancelled successfully" }
 ```
 
-**错误响应：**
-- `400 invalid_request` — 路径中未提供 task_id
-- `404 task_not_found` — 任务不存在
-- `500 cancel_failed` — 取消操作失败
+**錯誤回應：**
+- `400 invalid_request` — 路徑中未提供 task_id
+- `404 task_not_found` — 任務不存在
+- `500 cancel_failed` — 取消操作失敗
 
 ---
 
-## 任务状态
+## 任務狀態
 
-| 状态值 | 含义 |
+| 狀態值 | 含義 |
 |---|---|
-| `queued` | 已入队，等待执行 |
-| `running` | 正在执行 |
+| `queued` | 已入佇列，等待執行 |
+| `running` | 正在執行 |
 | `completed` | 已成功完成 |
-| `failed` | 执行失败 |
-| `cancelled` | 已通过 DELETE 接口取消 |
+| `failed` | 執行失敗 |
+| `cancelled` | 已透過 DELETE 介面取消 |
 
 ---
 
-## Webhook 回调
+## Webhook 回呼
 
-创建任务时可设置 `webhook` 字段。当任务进入终态（`completed`、`failed`、`cancelled`）时，Bot 会向该地址发送一个 `POST` 请求。
+建立任務時可設定 `webhook` 欄位。當任務進入終態（`completed`、`failed`、`cancelled`）時，Bot 會向該位址傳送一個 `POST` 請求。
 
-**回调请求头：**
+**回呼請求標頭：**
 
 ```
 Content-Type: application/json
 User-Agent: SaveAny-Bot/1.0
 ```
 
-**回调请求体：**
+**回呼請求內容：**
 
 ```json
 {
@@ -437,6 +437,6 @@ User-Agent: SaveAny-Bot/1.0
 }
 ```
 
-`completed_at` 仅在状态为 `completed` 或 `failed` 时出现。`error` 仅在有错误时出现。
+`completed_at` 僅在狀態為 `completed` 或 `failed` 時出現。`error` 僅在有錯誤時出現。
 
-**重试机制：** 最多重试 3 次，重试间隔依次为 1 秒、2 秒、3 秒。每次请求超时为 30 秒。
+**重試機制：** 最多重試 3 次，重試間隔依次為 1 秒、2 秒、3 秒。每次請求逾時為 30 秒。

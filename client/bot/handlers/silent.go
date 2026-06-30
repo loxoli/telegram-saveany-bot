@@ -76,7 +76,7 @@ func handleSetDefaultCallback(ctx *ext.Context, update *ext.Update) error {
 	}
 	var dir *database.Dir
 	if data.DirID != 0 {
-		// 已经选择了文件夹
+		// 已經選擇了資料夾
 		var err error
 		dir, err = database.GetDirByID(ctx, data.DirID)
 		if err != nil {
@@ -84,7 +84,7 @@ func handleSetDefaultCallback(ctx *ext.Context, update *ext.Update) error {
 		}
 		user.DefaultDir = dir.ID
 	} else {
-		// 检查是否有可用的文件夹
+		// 檢查是否有可用的資料夾
 		dirs, err := database.GetDirsByUserIDAndStorageName(ctx, user.ID, storageName)
 		if err != nil {
 			return failedAnswer(i18n.T(i18nk.BotMsgCommonErrorGetDirFailed, map[string]any{
@@ -92,7 +92,7 @@ func handleSetDefaultCallback(ctx *ext.Context, update *ext.Update) error {
 			}))
 		}
 		if len(dirs) > 0 {
-			// 要求选择文件夹
+			// 要求選擇資料夾
 			markup, err := msgelem.BuildSetDefaultDirMarkup(ctx, storageName, dirs)
 			if err != nil {
 				return failedAnswer(i18n.T(i18nk.BotMsgCommonErrorBuildDirSelectKeyboardFailed, map[string]any{

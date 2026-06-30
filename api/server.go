@@ -10,23 +10,23 @@ import (
 	"github.com/krau/SaveAny-Bot/config"
 )
 
-// Server API 服务器
+// Server API 伺服器
 type Server struct {
 	httpServer *http.Server
 	factory    *TaskFactory
 }
 
-// NewServer 创建新的 API 服务器
+// NewServer 建立新的 API 伺服器
 func NewServer(ctx context.Context) *Server {
 	cfg := config.C().API
 
 	factory := NewTaskFactory(ctx)
 	handlers := NewHandlers(factory)
 
-	// 设置路由
+	// 設定路由
 	mux := http.NewServeMux()
 
-	// 健康检查
+	// 健康檢查
 	mux.HandleFunc("/health", handlers.HealthCheckHandler)
 
 	// API v1 路由
@@ -41,7 +41,7 @@ func NewServer(ctx context.Context) *Server {
 		}
 	})
 	mux.HandleFunc("/api/v1/tasks/", func(w http.ResponseWriter, r *http.Request) {
-		// 根据方法和路径分发
+		// 根據方法和路徑分發
 		switch r.Method {
 		case http.MethodGet:
 			handlers.GetTaskHandler(w, r)
@@ -54,7 +54,7 @@ func NewServer(ctx context.Context) *Server {
 	mux.HandleFunc("/api/v1/storages", handlers.ListStoragesHandler)
 	mux.HandleFunc("/api/v1/task-types", handlers.GetTaskTypesHandler)
 
-	// 404 处理
+	// 404 處理
 	mux.HandleFunc("/", NotFoundHandler)
 
 	// Apply middleware chain.
@@ -84,20 +84,20 @@ func NewServer(ctx context.Context) *Server {
 	}
 }
 
-// Start 启动服务器
+// Start 啟動伺服器
 func (s *Server) Start(ctx context.Context) error {
 	logger := log.FromContext(ctx).With("module", "api")
 
 	logger.Infof("Starting API server on %s", s.httpServer.Addr)
 
-	// 在 goroutine 中启动服务器
+	// 在 goroutine 中啟動伺服器
 	go func() {
 		if err := s.httpServer.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			logger.Errorf("API server error: %v", err)
 		}
 	}()
 
-	// 监听 context 取消
+	// 監聽 context 取消
 	go func() {
 		<-ctx.Done()
 		shutdownCtx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
@@ -110,12 +110,12 @@ func (s *Server) Start(ctx context.Context) error {
 	return nil
 }
 
-// loggingMiddleware 日志中间件
+// loggingMiddleware 日誌中間件
 func loggingMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		start := time.Now()
 
-		// 包装 ResponseWriter 以获取状态码
+		// 包裝 ResponseWriter 以取得狀態碼
 		wrapped := &responseWriter{ResponseWriter: w, statusCode: http.StatusOK}
 
 		next.ServeHTTP(wrapped, r)
@@ -124,7 +124,7 @@ func loggingMiddleware(next http.Handler) http.Handler {
 	})
 }
 
-// recoveryMiddleware 恢复中间件
+// recoveryMiddleware 恢復中間件
 func recoveryMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		defer func() {
@@ -137,7 +137,7 @@ func recoveryMiddleware(next http.Handler) http.Handler {
 	})
 }
 
-// responseWriter 包装 http.ResponseWriter 以捕获状态码
+// responseWriter 包裝 http.ResponseWriter 以擷取狀態碼
 type responseWriter struct {
 	http.ResponseWriter
 	statusCode int

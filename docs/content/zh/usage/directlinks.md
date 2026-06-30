@@ -1,21 +1,21 @@
 ---
-title: "直接下载链接"
+title: "直接下載連結"
 weight: 5
 ---
 
-# 直接下载链接
+# 直接下載連結
 
-使用 `/dl` 命令可以直接下载一个或多个 HTTP/HTTPS 链接的文件到存储中.
+使用 `/dl` 命令可以直接下載一個或多個 HTTP/HTTPS 連結的檔案到儲存空間中.
 
 ```bash
 /dl <url1> [url2] [url3] ...
 ```
 
-示例:
+範例:
 
 ```bash
 /dl https://example.com/file.zip
 /dl https://example.com/file1.zip https://example.com/file2.zip
 ```
 
-Bot 会验证链接格式, 然后让你选择目标存储位置.
+Bot 會驗證連結格式, 然後讓您選擇目標儲存位置.

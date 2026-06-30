@@ -1,0 +1,414 @@
+lifetime:
+  initing: 正在啟動
+  initfailed: 初始化失敗
+  exiting: 正在退出
+  user_login_failed: "使用者登入失敗: {{.Error}}"
+  cleaning_cache: "正在清理快取 {{.Path}}"
+  bye: 已退出
+config:
+  err:
+    invalid_cache_dir: "無效的快取目錄: {{.Path}}，請檢查設定檔"
+    duplicate_storage_name: "儲存名稱 '{{.Name}}' 重複，請檢查設定檔"
+err:
+  get_workdir_failed: "取得工作目錄失敗: {{.Error}}"
+  get_cache_abs_path_failed: "取得快取絕對路徑失敗: {{.Error}}"
+  clean_cache_failed: "清理快取失敗: {{.Error}}"
+parser:
+  plugin:
+    load_failed: 載入解析器外掛失敗
+    loaded_dir: 解析器外掛已載入
+bot:
+  msg:
+    help_text_fmt: |
+      Save Any Bot - 轉存你的 Telegram 檔案
+      版本: %s , 提交: %s
+
+      命令:
+      /start - 開始使用
+      /help - 顯示說明
+      /silent - 開關靜默模式
+      /storage - 設定預設儲存位置
+      /save [自訂檔名] - 儲存檔案
+      /dl <連結1> <連結2> ... - 下載指定連結的檔案
+      /import <儲存名> <目錄路徑> [頻道ID] [過濾器] - 從儲存端匯入檔案到 Telegram
+      /dir - 管理儲存目錄
+      /rule - 管理規則
+      /config - 修改設定
+      /fnametmpl - 設定檔案自訂命名模板
+      /parser - 管理解析器外掛
+      /task - 管理任務佇列
+      /watch - 監聽聊天並自動儲存 (UserBot)
+      /unwatch - 取消監聽聊天 (UserBot)
+      /lswatch - 列出正在監聽的聊天 (UserBot)
+      /syncpeers - 同步對話列表 (UserBot)
+      /update - 檢查更新並升級
+
+      使用說明: https://sabot.unv.app/usage
+    cmd:
+      start: "開始使用"
+      silent: "切換靜默模式"
+      storage: "設定預設儲存端"
+      dir: "管理儲存資料夾"
+      rule: "管理自動儲存規則"
+      save: "儲存檔案"
+      dl: "下載指定連結的檔案"
+      aria2dl: "使用 Aria2 下載指定連結的檔案"
+      ytdlp: "使用 yt-dlp 下載影片/音訊"
+      import: "從儲存端匯入檔案到 Telegram"
+      transfer: "在儲存端之間傳輸檔案"
+      task: "管理任務佇列"
+      cancel: "取消任務"
+      watch: "監聽聊天(UserBot)"
+      unwatch: "取消監聽聊天(UserBot)"
+      lswatch: "列出監聽的聊天(UserBot)"
+      syncpeers: "同步對話列表(UserBot)"
+      config: "修改設定"
+      fnametmpl: "設定檔案命名模板"
+      help: "顯示說明"
+      parser: "管理解析器"
+      update: "檢查更新"
+    save_help_text: |
+      使用方法:
+
+      1. 使用此命令回覆要儲存的檔案，可選填檔名參數。
+      範例:
+      /save custom_file_name.mp4
+
+      2. 設定預設儲存後，傳送 /save <頻道ID/使用者名稱> <訊息ID範圍> 來批次儲存檔案。遵從儲存規則，若未匹配到任何規則則使用預設儲存。
+      範例:
+      /save @acherkrau 114-514
+    watch_help_text: |
+      使用 /watch 命令監聽一個聊天的訊息，並自動儲存到預設儲存中，遵從儲存規則。
+
+      命令語法:
+      /watch <chat_id> [filter]
+
+      參數:
+      - <chat_id>: 聊天的 ID 或使用者名稱
+      - [filter]: 可選，格式為 過濾器類型:表達式，所有支援類型的過濾器請參閱文件
+
+      命令範例:
+      /watch -1002229835658 msgre:.*plana.*
+
+      這將監聽 ID 為 -1002229835658 的聊天，並轉存所有包含 "plana" 的媒體訊息
+    common:
+      cancel_button_text: "取消任務"
+      error_invalid_regex: "無效的正則表達式: {{.Error}}"
+      error_invalid_msg_id_range: "無效的訊息ID範圍: {{.Error}}"
+      error_invalid_id_or_username: "無效的ID或使用者名稱: {{.Error}}"
+      error_get_messages_failed: "取得訊息失敗: {{.Error}}"
+      info_fetching_messages: "正在取得訊息..."
+      error_no_messages_in_range: "找不到指定範圍內的訊息"
+      error_no_savable_messages_in_range: "找不到指定範圍內的可儲存訊息"
+      error_build_storage_select_message_failed: "建立儲存選擇訊息失敗: {{.Error}}"
+      error_build_storage_select_keyboard_failed: "建立儲存選擇鍵盤失敗: {{.Error}}"
+      info_found_files_select_storage: "找到 {{.Count}} 個檔案，請選擇儲存位置"
+      error_get_user_failed: "取得使用者失敗"
+      error_get_user_with_err_failed: "取得使用者失敗: {{.Error}}"
+      error_default_storage_not_set: "請先設定預設儲存，請使用 /storage 命令"
+      error_no_available_storage: "無可用的儲存"
+      error_get_storage_failed: "取得儲存失敗: {{.Error}}"
+      prompt_select_default_storage: "請選擇要設為預設的儲存位置"
+      error_data_expired: "資料已過期或無效"
+      error_task_add_failed: "任務新增失敗: {{.Error}}"
+      info_task_added: "任務已新增"
+      info_batch_tasks_added: "已新增批次任務，共 {{.Count}} 個檔案"
+      info_batch_tasks_added_with_skipped: "已新增批次任務，共 {{.Count}} 個檔案\n已跳過同名檔案:\n{{.Skipped}}"
+      info_all_conflict_files_skipped: "全部同名檔案已跳過:\n{{.Skipped}}"
+      info_conflict_files_skipped: "已跳過同名檔案:\n{{.Skipped}}"
+      error_task_create_failed: "任務建立失敗: {{.Error}}"
+      error_get_dir_failed: "取得目錄失敗: {{.Error}}"
+      prompt_select_dir: "請選擇要儲存的目錄"
+      prompt_select_conflict_strategy: "偵測到同名檔案，請選擇儲存策略:\n{{.Files}}"
+      prompt_conflict_more_files: "...還有 {{.Count}} 個檔案"
+      button_conflict_rename: "重新命名"
+      button_conflict_overwrite: "覆蓋"
+      button_conflict_skip: "跳過"
+      prompt_select_default_dir: "請選擇要儲存的預設資料夾"
+      info_default_storage_set: "已將預設儲存位置設為: {{.Name}}"
+      info_default_storage_with_dir_set: "已將預設儲存位置設為: {{.Name}}:/{{.Dir}}"
+      error_get_user_info_failed: "取得使用者資訊失敗: {{.Error}}"
+      error_update_user_info_failed: "更新使用者資訊失敗: {{.Error}}"
+      info_silent_mode_on: "已開啟靜默模式"
+      info_silent_mode_off: "已關閉靜默模式"
+      error_get_file_failed: "取得檔案失敗: {{.Error}}"
+      info_fetching_file_info: "正在取得檔案資訊..."
+      error_no_savable_files_found: "找不到可儲存的檔案"
+      error_parse_telegraph_path_failed: "解析 telegraph 路徑失敗: {{.Error}}"
+      info_fetching_telegraph_page: "正在取得 telegraph 頁面..."
+      error_get_telegraph_page_failed: "取得 telegraph 頁面失敗: {{.Error}}"
+      error_no_images_in_telegraph_page: "在 telegraph 頁面中未找到圖片"
+      error_build_dir_select_keyboard_failed: "建立目錄選擇鍵盤失敗: {{.Error}}"
+      error_no_permission: |
+        您不在白名單中，無法使用此 Bot。
+        您可以部署自己的實例: https://github.com/krau/SaveAny-Bot
+    save:
+      error_invalid_id_or_username: "無效的ID或使用者名稱: {{.Error}}"
+    watch:
+      error_filter_format_invalid: "過濾器格式錯誤，請使用 <過濾器類型>:<表達式>"
+      error_filter_type_unsupported: "不支援的過濾器類型，請參閱文件"
+      error_watch_chat_failed: "監聽聊天失敗: {{.Error}}"
+      info_watch_chat_started: "已開始監聽聊天: {{.Chat}}"
+      info_already_watching_chat: "已在監聽此聊天"
+      info_watch_list_empty: "目前沒有監聽任何聊天"
+      info_watch_list_header: "目前監聽的聊天:\n"
+      info_watch_list_filter_prefix: " (過濾器: "
+      error_unwatch_no_chat_provided: "請提供要取消監聽的聊天ID或使用者名稱"
+      error_unwatch_chat_failed: "取消監聽聊天失敗: {{.Error}}"
+      info_watch_chat_stopped: "已取消監聽聊天: {{.Chat}}"
+    tasks:
+      usage_cancel: "用法: /tasks cancel <task_id>"
+      usage: "用法: /tasks [running|queued|cancel <task_id>]"
+      cancel_failed: "取消任務失敗: {{.Error}}"
+      cancel_requested_prefix: "已請求取消任務: "
+      running_empty: "目前沒有正在執行的任務"
+      running_title: "目前正在執行的任務:"
+      total_prefix: "總數: {{.Count}}\n"
+      field_id: "ID: "
+      field_title: "名稱: "
+      field_created: "建立時間: "
+      field_status: "狀態: "
+      status_running: "執行中"
+      status_queued: "排隊中"
+      status_cancel_requested: "已請求取消"
+      queued_empty: "目前沒有排隊中的任務"
+      queued_title: "目前排隊中的任務:"
+      truncated_note: "...\n只顯示前 10 個任務，共 {{.Count}} 個任務"
+      info_added_to_queue_full: "已新增到任務佇列\n檔名: {{.Filename}}\n目前排隊任務數: {{.QueueLength}}"
+      info_added_to_queue_prefix: "已新增到任務佇列\n"
+      info_filename_prefix: "檔名: "
+      info_queue_length_prefix: "\n目前排隊任務數: "
+    rule:
+      error_get_user_rules_failed: "取得使用者規則失敗"
+      error_update_user_failed: "更新使用者失敗"
+      info_rule_mode_enabled: "已啟用規則模式"
+      info_rule_mode_disabled: "已停用規則模式"
+      error_invalid_rule_type: "無效的規則類型: {{.Type}}\n可用: {{.Available}}"
+      error_create_rule_failed: "建立規則失敗"
+      info_create_rule_success: "建立規則成功"
+      prompt_provide_rule_id: "請提供規則ID"
+      error_invalid_rule_id: "無效的規則ID"
+      error_delete_rule_failed: "刪除規則失敗"
+      info_delete_rule_success: "刪除規則成功"
+      help_usage: "使用方法: /rule <操作> <參數...>"
+      help_current_mode_enabled: "\n目前已啟用規則模式"
+      help_current_mode_disabled: "\n目前已停用規則模式"
+      help_available_ops: "\n\n可用操作:\n"
+      help_switch_suffix: " - 開關規則模式\n"
+      help_add_suffix: " <類型> <資料> <儲存名> <路徑> - 新增規則\n"
+      help_del_suffix: " <規則ID> - 刪除規則\n"
+      help_preset_suffix: " <儲存名> [基礎路徑] - 匯入內建檔案類型分類規則(影片/圖片/音訊/文件/壓縮包)\n"
+      help_existing_rules_prefix: "\n目前已新增的規則:\n"
+      prompt_provide_storage_name: "請提供儲存名稱"
+      error_storage_not_found: "未找到儲存: {{.Storage}}"
+      info_preset_imported: "已匯入 {{.Count}} 條內建分類規則到儲存 {{.Storage}}"
+    dir:
+      error_get_user_dirs_failed: "取得使用者資料夾失敗"
+      error_get_user_failed: "取得使用者失敗"
+      error_create_dir_failed: "建立資料夾失敗"
+      info_create_dir_success: "資料夾新增成功"
+      error_invalid_dir_id: "資料夾ID無效"
+      error_delete_dir_failed: "刪除資料夾失敗"
+      info_delete_dir_success: "資料夾刪除成功"
+      error_unknown_operation: "未知操作"
+      help_usage: "使用方法: /dir <操作> <參數...>"
+      help_available_ops: "\n\n可用操作:\n"
+      help_add_suffix: " <儲存名> <路徑> - 新增路徑\n"
+      help_del_suffix: " <路徑ID> - 刪除路徑\n"
+      help_add_example_prefix: "\n新增路徑範例:\n"
+      help_add_example_cmd: "/dir add local1 path/to/dir"
+      help_del_example_prefix: "\n\n刪除路徑範例:\n"
+      help_del_example_cmd: "/dir del 3"
+      help_existing_dirs_prefix: "\n\n目前已新增的路徑:\n"
+      button_default: "預設"
+    parser:
+      help_text: |
+        用法:
+
+        /parser install <回覆一個檔案> - 安裝解析器
+      plugin_not_enabled: "解析器外掛功能未啟用"
+      prompt_reply_with_parser_file: "請回覆一個包含解析器檔案的訊息"
+      error_no_valid_file_in_reply: "回覆的訊息不包含有效的檔案"
+      error_wrong_file_type: "錯誤的檔案類型"
+      error_file_too_large: "檔案過大"
+      error_get_filename_failed: "無法取得檔名"
+      error_only_js_supported: "僅支援 .js 檔案作為解析器"
+      error_download_file_failed: "檔案下載失敗: {{.Error}}"
+      error_install_plugin_failed: "外掛安裝失敗: {{.Error}}"
+      info_install_plugin_success: "外掛安裝成功: {{.Name}}"
+    parse:
+      info_parsing: "正在解析..."
+      error_parse_text_failed: "Failed to parse text: {{.Error}}"
+      error_build_storage_select_keyboard_failed: "Failed to build storage selection keyboard: {{.Error}}"
+      error_build_parsed_text_entity_failed: "Failed to build parsed text entity: {{.Error}}"
+      info_link_prefix: "\n連結: "
+      info_author_prefix: "\n作者: "
+      info_description_prefix: "\n描述: "
+      info_file_count_prefix: "\n檔案數量: "
+      info_total_size_prefix: "\n預計總大小: "
+      info_prompt_select_storage: "\n請選擇儲存位置"
+    telegraph:
+      error_build_storage_select_keyboard_failed: "建立儲存選擇鍵盤失敗: {{.Error}}"
+      info_title_prefix: "標題: "
+      info_pic_count_prefix: "\n圖片數量: "
+      info_prompt_select_storage: "\n請選擇儲存位置"
+    update:
+      error_version_var_invalid: "目前處於開發版本或版本資訊注入失敗: {{.Error}}"
+      error_check_latest_failed: "偵測最新版本失敗: {{.Error}}"
+      error_no_release_found: "找不到版本資訊"
+      info_major_upgrade_required: "偵測到重大版本更新: {{.Current}} -> {{.Latest}}，請前往 GitHub 手動下載最新版本並查看遷移指南"
+      info_already_latest: "目前已是最新版本: {{.Version}}"
+      info_new_version_in_docker: |-
+        發現新版本: {{.Latest}}
+        目前版本: {{.Current}}
+        發佈時間: {{.PublishedAt}}
+        由於您正在使用 Docker 部署，請自行在部署平台上執行更新命令
+      info_new_version_prompt_upgrade: |-
+        發現新版本: {{.Latest}}
+        目前版本: {{.Current}}
+
+        檔案大小: {{.SizeMB}} MB
+        下載連結: {{.URL}}
+        發佈時間: {{.PublishedAt}}
+
+        升級將重啟 Bot，是否升級?
+      info_upgrading_with_version: "正在升級中，目前版本: {{.Current}}"
+      error_upgrade_failed: "升級失敗: {{.Error}}"
+      info_upgrade_success: "已升級至版本 {{.Version}}\n若 Bot 未自動重啟請手動啟動"
+      button_upgrade: "升級"
+    config:
+      prompt_select_option: "請選擇要設定的選項"
+      button_filename_strategy: "檔名策略"
+      button_conflict_strategy: "同名檔案儲存策略"
+      error_invalid_callback_data: "無效的回呼資料"
+      error_invalid_template: "無效的模板，請檢查語法\n{{.Error}}"
+      info_filename_strategy_set: "已將檔名策略設定為: {{.Strategy}}"
+      info_conflict_strategy_set: "已將同名檔案儲存策略設定為: {{.Strategy}}"
+      prompt_select_filename_strategy: "請選擇檔名策略，目前策略: {{.Strategy}}"
+      prompt_select_conflict_strategy: "請選擇同名檔案儲存策略，目前策略: {{.Strategy}}"
+      conflict_strategy_rename: "始終重新命名"
+      conflict_strategy_ask: "每次詢問"
+      conflict_strategy_overwrite: "始終覆蓋"
+      conflict_strategy_skip: "始終跳過"
+      fnametmpl_help: |-
+        使用此命令設定檔名模板，範例:
+        /fnametmpl 圖片_{{"{{.msgid}}"}}_{{"{{.msgdate}}"}}.jpg
+
+        可用變數:
+        - {{"{{.msgid}}"}}: 訊息ID
+        - {{"{{.msgtags}}"}}: 訊息中的標籤，將以底線分隔輸出
+        - {{"{{.msggen}}"}}: 根據訊息產生的檔名
+        - {{"{{.msgdate}}"}}: 訊息日期，格式 YYYY-MM-DD_HH-MM-SS
+        - {{"{{.msgraw}}"}}: 訊息的原始文字內容（不經任何處理）
+        - {{"{{.origname}}"}}: 媒體的原始檔名（如果有）
+        - {{"{{.chatid}}"}}: 訊息的聊天ID
+
+        模板僅在檔名策略設定為「自訂模板」時生效，
+        且模板解析錯誤時會回退到預設檔名
+      info_template_updated: "已更新檔名模板"
+      info_current_template_prefix: "目前模板: {{.Template}}"
+    dl:
+      usage: "用法: /dl <連結1> <連結2> ..."
+      error_no_valid_links: "沒有有效的連結可供下載"
+      info_files_select_storage: "共 {{.Count}} 個檔案，請選擇儲存位置"
+    ytdlp:
+      usage: "用法: /ytdlp [選項] <URL1> [URL2] ...\n範例:\n  /ytdlp https://example.com/video\n  /ytdlp --format best https://example.com/video\n  /ytdlp --extract-audio --audio-format mp3 https://example.com/video"
+      error_no_valid_urls: "沒有有效的 URL"
+      info_urls_select_storage: "共 {{.Count}} 個連結，請選擇儲存位置"
+      info_downloading: "正在透過 yt-dlp 下載..."
+      error_download_failed: "yt-dlp 下載失敗: {{.Error}}"
+    transfer:
+      usage: |
+        用法: /transfer <source_storage>:/<source_path> [filter]
+        範例:
+        /transfer local1:/downloads
+        /transfer alist1:/media/photos
+        /transfer webdav1:/files ".*\.mp4$"
+      error_invalid_source: "來源路徑格式無效，應為: storage_name:/path"
+      error_invalid_target: "目標路徑格式無效，應為: storage_name:/path"
+      error_storage_not_found: "儲存端 '{{.StorageName}}' 不存在或您無權存取: {{.Error}}"
+      error_storage_not_listable: "儲存端 '{{.StorageName}}' 不支援列舉檔案功能"
+      error_storage_not_readable: "儲存端 '{{.StorageName}}' 不支援讀取檔案功能"
+      error_target_not_found: "目標儲存端 '{{.StorageName}}' 不存在或您無權存取: {{.Error}}"
+      info_fetching_files: "正在取得檔案列表..."
+      error_list_files_failed: "取得檔案列表失敗: {{.Error}}"
+      error_invalid_regex: "正則表達式無效: {{.Error}}"
+      error_no_files_to_transfer: "目錄中沒有可傳輸的檔案"
+      error_add_task_failed: "新增任務失敗: {{.Error}}"
+      info_task_added: "已新增 {{.Count}} 個檔案到傳輸佇列\n總大小: {{.SizeMB}} MB\n任務 ID: {{.TaskID}}"
+      start_stats: "總檔案數: {{.Count}}\n總大小: {{.SizeMB}} MB"
+      info_files_select_storage: "共 {{.Count}} 個檔案（總大小: {{.SizeMB}} MB），請選擇目標儲存位置"
+      error_build_storage_select_keyboard_failed: "建立儲存選擇鍵盤失敗: {{.Error}}"
+    cancel:
+      usage: "用法: /cancel <task_id>"
+      error_cancel_failed: "取消任務失敗: {{.Error}}"
+      info_cancel_requested: "已請求取消任務: {{.TaskID}}"
+      info_cancelling_task: "正在取消任務..."
+    media_group:
+      info_saving_files: "正在儲存檔案..."
+      error_build_storage_select_keyboard_failed: "建立儲存選擇鍵盤失敗: {{.Error}}"
+      info_group_found_files_select_storage: "共 {{.Count}} 個檔案，請選擇儲存位置"
+    storage:
+      info_filename_prefix: "檔名: "
+      info_prompt_select_storage: "\n請選擇儲存位置"
+    progress:
+      batch_start_prefix: "開始執行批次下載任務\n總大小: "
+      batch_processing_prefix: "正在處理批次下載任務\n總大小: "
+      downloading_prefix: "正在下載\n總大小: "
+      processing_list_prefix: "\n正在處理:\n"
+      processing_none: "  - 無"
+      avg_speed_prefix: "\n平均速度: "
+      current_progress_prefix: "\n目前進度: "
+      task_canceled: "任務已取消"
+      task_canceled_with_id: "處理已取消: {{.TaskID}}"
+      task_failed_with_error: "處理失敗: {{.Error}}"
+      batch_done_prefix: "處理完成\n檔案數: "
+      direct_done_prefix: "處理完成，檔案數量: "
+      parsed_start_prefix: "開始下載 {{.Site}} 的資源\n總大小: "
+      parsed_done_prefix: "處理完成，資源數量: "
+      telegraph_start_prefix: "開始下載Telegraph\n圖片數量: "
+      telegraph_progress_prefix: "正在下載\n目前進度: "
+      telegraph_done_prefix: "處理完成\n圖片數量: "
+      file_start_prefix: "開始下載\n檔名: "
+      file_processing_prefix: "正在處理下載任務\n檔名: "
+      download_failed_prefix: "下載失敗\n檔名: "
+      download_done_prefix: "下載完成\n檔名: "
+      file_size_prefix: "\n檔案大小: "
+      save_path_prefix: "\n儲存路徑: "
+      total_size_prefix: "\n總大小: "
+      direct_start: "開始下載，總大小: {{.SizeMB}} MB（{{.Count}} 個檔案）"
+      file_name_prefix: "檔名: "
+      error_prefix: "\n錯誤: "
+      aria2_start: "等待 Aria2 下載完成 (GID: {{.GID}})..."
+      aria2_downloading: "Aria2 正在下載 (GID: {{.GID}})\n"
+      aria2_done: "Aria2 下載完成並已轉存 (GID: {{.GID}})\n"
+      ytdlp_start: "開始使用 yt-dlp 下載（{{.Count}} 個連結）..."
+      ytdlp_downloading: "yt-dlp 正在下載（{{.Count}} 個連結）\n"
+      ytdlp_done: "yt-dlp 下載完成並已轉存（{{.Count}} 個檔案）\n"
+      downloaded_prefix: "\n已下載: "
+      current_speed_prefix: "\n目前速度: "
+      transfer_start_prefix: "正在轉存: "
+      transfer_progress_prefix: "轉存進度: "
+      transfer_uploaded_prefix: "\n已上傳: "
+      transfer_speed_prefix: "\n速度: "
+      transfer_remaining_time_prefix: "\n剩餘時間: "
+      transfer_processing_prefix: "\n正在處理:\n"
+      transfer_processing_more: "...和其他 {{.Count}} 個檔案\n"
+      transfer_failed_prefix: "轉存失敗\n"
+      transfer_success_prefix: "轉存完成\n"
+      transfer_total_files_prefix: "\n總檔案數: "
+      transfer_total_size_prefix: "\n總大小: "
+      transfer_elapsed_time_prefix: "\n耗時: "
+      transfer_avg_speed_prefix: "\n平均速度: "
+      transfer_failed_files_prefix: "\n失敗檔案數: "
+    syncpeers:
+      start: "正在同步對話列表..."
+      success: "對話列表同步完成，共同步 {{.Count}} 個對話"
+      failed: "對話列表同步失敗: {{.Error}}"
+    aria2:
+      error_aria2_not_enabled: "Aria2 功能未啟用，請在設定檔中啟用"
+      error_aria2_client_init_failed: "Aria2 客戶端初始化失敗: {{.Error}}"
+      info_adding_aria2_download: "正在新增 Aria2 下載任務..."
+      error_adding_aria2_download: "新增 Aria2 下載任務失敗: {{.Error}}"
+      info_aria2_download_added: "Aria2 下載任務已新增，GID: {{.GID}}"
+      info_select_storage: "請選擇儲存位置，選擇後將新增到 Aria2 下載佇列"

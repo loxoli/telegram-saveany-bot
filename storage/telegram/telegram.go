@@ -98,10 +98,10 @@ func (t *Telegram) Save(ctx context.Context, r io.Reader, storagePath string) er
 		return fmt.Errorf("rate limit failed: %w", err)
 	}
 
-	// 去除前导斜杠并分隔路径, 当 len(parts):
-	// ==0, 存储到配置文件中的 chat_id, 随机文件名
-	// ==1, 视作只有文件名, 存储到配置文件中的 chat_id
-	// ==2, parts[0]: 视作要存储到的 chat_id, parts[1]: filename
+	// 去除前導斜線並分隔路徑, 當 len(parts):
+	// ==0, 儲存到設定檔中的 chat_id, 隨機檔名
+	// ==1, 視作只有檔名, 儲存到設定檔中的 chat_id
+	// ==2, parts[0]: 視作要儲存到的 chat_id, parts[1]: filename
 	parts := slice.Compact(strings.Split(strings.TrimPrefix(storagePath, "/"), "/"))
 	filename := ""
 	chatID := t.config.ChatID
@@ -111,7 +111,7 @@ func (t *Telegram) Save(ctx context.Context, r io.Reader, storagePath string) er
 	if len(parts) >= 2 && validator.IsAlphaNumeric(parts[0]) {
 		cid, err := tgutil.ParseChatID(tctx, parts[0])
 		if err != nil {
-			// id不合法时使用配置文件中的 chat_id
+			// id不合法時使用設定檔中的 chat_id
 			log.FromContext(ctx).Warnf("Failed to parse chat ID from path, using configured chat_id: %s", err)
 			cid = chatID
 		}
@@ -235,7 +235,7 @@ func (t *Telegram) splitUpload(ctx *ext.Context, r io.Reader, filename string, u
 	}
 	inputFiles := make([]tg.InputFileClass, 0, len(matched))
 	for _, partPath := range matched {
-		// 串行上传, 不然容易被tg风控
+		// 串行上傳, 不然容易被 tg 風控
 		err = func() error {
 			partFile, err := os.Open(partPath)
 			if err != nil {

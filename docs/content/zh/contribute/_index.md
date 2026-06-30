@@ -1,34 +1,34 @@
 ---
-title: "参与开发"
+title: "參與開發"
 weight: 20
 ---
 
-# 参与开发
+# 參與開發
 
-在开始之前, 请 Fork 本项目, 并克隆到本地, 安装好 Go 开发环境.
+在開始之前, 請 Fork 本專案, 並複製到本機, 安裝好 Go 開發環境.
 
-以下是一些贡献代码的指南或建议, 你不必完全遵守, 但将有助于快速 review 并合并你的提交:
+以下是一些貢獻程式碼的指南或建議, 您不必完全遵守, 但將有助於快速 review 並合併您的提交:
 
-- **新功能请先提交 Issue**, 以便讨论设计和实现细节, 并避免因与项目设计不符而被拒绝.
-- **使用现代开发工具**, 确保提交前格式化代码, 并保持风格一致.
-- **使用[语义化提交](https://www.conventionalcommits.org/zh-hans/v1.0.0/)**, 避免提交消息模糊或过于简单.
+- **新功能請先提交 Issue**, 以便討論設計和實作細節, 並避免因與專案設計不符而被拒絕.
+- **使用現代開發工具**, 確保提交前格式化程式碼, 並保持風格一致.
+- **使用[語義化提交](https://www.conventionalcommits.org/zh-hans/v1.0.0/)**, 避免提交訊息模糊或過於簡單.
 
-## 贡献新存储端
+## 貢獻新儲存端
 
-1. 在 `pkg/enums/storage/storages.go` 中添加新的存储端类型, 并运行代码生成
-2. 在 `config/storage` 目录下定义存储端配置, 并添加到 `config/storage/factory.go` 中
-3. 在 `storage` 目录下新建一个包, 编写存储端实现, 然后在 `storage/storage.go` 中导入并添加它
-4. 更新文档, 添加配置说明
+1. 在 `pkg/enums/storage/storages.go` 中新增新的儲存端類型, 並執行程式碼生成
+2. 在 `config/storage` 目錄下定義儲存端設定, 並新增到 `config/storage/factory.go` 中
+3. 在 `storage` 目錄下新建一個套件, 撰寫儲存端實作, 然後在 `storage/storage.go` 中匯入並新增它
+4. 更新文件, 新增設定說明
 
-## 贡献新解析器
+## 貢獻新解析器
 
-你可以选择使用 Go 编写原生的解析器实现(推荐), 或是使用 JavaScript 以插件的方式实现.
+您可以選擇使用 Go 撰寫原生的解析器實作（推薦）, 或是使用 JavaScript 以插件的方式實作.
 
-如果使用 Go 编写, 请:
+如果使用 Go 撰寫, 請:
 
-1. 在 `parsers` 目录下新建一个包, 编写解析器实现
-2. 在 `parsers/parser.go` 的 `init` 中注册解析器
+1. 在 `parsers` 目錄下新建一個套件, 撰寫解析器實作
+2. 在 `parsers/parser.go` 的 `init` 中註冊解析器
 
-如果使用 JavaScript 编写, 请参考 `plugins/example_parser_basic.js` 的实现, 并在该文件夹下新建一个 js 文件, 实现你的解析逻辑.
+如果使用 JavaScript 撰寫, 請參考 `plugins/example_parser_basic.js` 的實作, 並在該資料夾下新建一個 js 檔案, 實作您的解析邏輯.
 
-需要注意, `plugins` 目录下解析器默认不会被编译到二进制文件中, 用户需要手动下载它们并放到本地指定目录下以启用它们.
+需要注意, `plugins` 目錄下解析器預設不會被編譯到二進位檔案中, 使用者需要手動下載它們並放到本機指定目錄下以啟用它們.

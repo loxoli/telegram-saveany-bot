@@ -24,7 +24,7 @@ func GetStorageByName(ctx context.Context, name string) (Storage, error) {
 	}
 	cfg := config.C().GetStorageByName(name)
 	if cfg == nil {
-		return nil, fmt.Errorf("未找到存储 %s", name)
+		return nil, fmt.Errorf("未找到儲存 %s", name)
 	}
 
 	storage, err := NewStorage(ctx, cfg)
@@ -35,7 +35,7 @@ func GetStorageByName(ctx context.Context, name string) (Storage, error) {
 	return storage, nil
 }
 
-// 检查 user 是否可用指定的 storage, 若不可用则返回未找到错误
+// 檢查 user 是否可用指定的 storage, 若不可用則回傳未找到錯誤
 func GetStorageByUserIDAndName(ctx context.Context, chatID int64, name string) (Storage, error) {
 	if name == "" {
 		return nil, ErrStorageNameEmpty

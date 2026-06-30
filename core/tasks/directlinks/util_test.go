@@ -17,8 +17,8 @@ func TestParseFilenameFromURL(t *testing.T) {
 		},
 		{
 			name:     "filename with encoded characters",
-			url:      "https://example.com/files/%E6%B5%8B%E8%AF%95.zip",
-			expected: "测试.zip",
+			url:      "https://example.com/files/%E6%B8%AC%E8%A9%A6.zip",
+			expected: "測試.zip",
 		},
 		{
 			name:     "filename with query string in URL",

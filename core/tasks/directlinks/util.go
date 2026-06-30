@@ -108,7 +108,7 @@ func decodeFilenameParam(filename string) string {
 
 	// Check if the result is valid UTF-8. If not, try GBK decoding.
 	// This handles the case where Chinese Windows servers send GBK-encoded filenames
-	// which appear as garbled characters (e.g., "下载地址.zip" -> "���ص�ַ.zip")
+	// which appear as garbled characters (e.g., "下載地址.zip" -> "���ص�ַ.zip")
 	if !utf8.ValidString(decoded) {
 		if gbkDecoded := tryDecodeGBK(decoded); gbkDecoded != "" {
 			return gbkDecoded
@@ -209,7 +209,7 @@ func parseFilenameFallback(cd string) string {
 }
 
 var progressUpdatesLevels = []struct {
-	size        int64 // 文件大小阈值
+	size        int64 // 檔案大小閾值
 	stepPercent int   // 每多少 % 更新一次
 }{
 	{10 << 20, 100},

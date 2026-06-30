@@ -2,7 +2,7 @@
 
 # <img src="docs/static/logo.png" width="45" align="center"> Save Any Bot
 
-> **把 Telegram 上的文件转存到多种存储端**
+> **將 Telegram 上的檔案轉存到多種儲存端**
 
 [![Release Date](https://img.shields.io/github/release-date/krau/saveany-bot?label=release)](https://github.com/krau/saveany-bot/releases)
 [![tag](https://img.shields.io/github/v/tag/krau/saveany-bot.svg)](https://github.com/krau/saveany-bot/releases)
@@ -17,50 +17,50 @@
 
 ## 🎯 特性
 
-- 支持文档/视频/图片/贴纸…甚至还有 [Telegraph](https://telegra.ph/)
-- 破解禁止保存的文件
-- 批量下载
-- 流式传输
-- 多用户使用
-- 基于存储规则的自动整理
-- 监听并自动转存指定聊天的消息, 支持过滤
-- 在不同存储端之间转存文件
-- 集成 yt-dlp, 从所支持的网站下载并转存媒体文件
-- 集成 Aria2, 支持直链/磁力下载和转存
-- 使用 js 编写解析器插件以转存任意网站的文件
-- 存储端支持:
+- 支援文件/影片/圖片/貼圖…甚至還有 [Telegraph](https://telegra.ph/)
+- 破解禁止儲存的檔案
+- 批次下載
+- 串流傳輸
+- 多使用者使用
+- 基於儲存規則的自動整理
+- 監聽並自動轉存指定聊天室的訊息, 支援過濾
+- 在不同儲存端之間轉存檔案
+- 整合 yt-dlp, 從所支援的網站下載並轉存媒體檔案
+- 整合 Aria2, 支援直鏈/磁力下載和轉存
+- 使用 js 撰寫解析器插件以轉存任意網站的檔案
+- 儲存端支援:
   - Alist
   - S3
   - WebDAV
-  - 本地磁盘
+  - 本機磁碟
   - Rclone
-  - Telegram (重传回指定聊天)
+  - Telegram (重傳至指定聊天室)
 
-## 快速开始
+## 快速開始
 
-创建文件 `config.toml` 并填入以下内容:
+建立檔案 `config.toml` 並填入以下內容:
 
 ```toml
 [telegram]
-token = "" # 你的 Bot Token, 在 @BotFather 获取
+token = "" # 您的 Bot Token, 在 @BotFather 取得
 [telegram.proxy]
-# 启用代理连接 telegram
+# 啟用代理連接 telegram
 enable = false
 url = "socks5://127.0.0.1:7890"
 
 [[storages]]
-name = "本地磁盘"
+name = "本機磁碟"
 type = "local"
 enable = true
 base_path = "./downloads"
 
 [[users]]
-id = 114514 # 你的 Telegram 账号 id
+id = 114514 # 您的 Telegram 帳號 id
 storages = []
 blacklist = true
 ```
 
-使用 Docker 运行 Save Any Bot:
+使用 Docker 執行 Save Any Bot:
 
 ```bash
 docker run -d --name saveany-bot \
@@ -69,17 +69,17 @@ docker run -d --name saveany-bot \
     ghcr.io/krau/saveany-bot:latest
 ```
 
-请 [**查看文档**](https://sabot.unv.app/) 以获取更多配置选项和使用方法.
+請 [**查看文件**](https://sabot.unv.app/) 以取得更多設定選項和使用方法.
 
-## 赞助
+## 贊助
 
-本项目受到 [YxVM](https://yxvm.com/) 与 [NodeSupport](https://github.com/NodeSeekDev/NodeSupport) 的支持.
+本專案受到 [YxVM](https://yxvm.com/) 與 [NodeSupport](https://github.com/NodeSeekDev/NodeSupport) 的支持.
 
-如果这个项目对你有帮助, 你可以考虑通过以下方式赞助我:
+若此專案對您有幫助, 您可以考慮透過以下方式贊助:
 
-- [爱发电](https://afdian.com/a/unvapp)
+- [愛發電](https://afdian.com/a/unvapp)
 
-## 鸣谢
+## 鳴謝
 
 - [gotd](https://github.com/gotd/td)
 - [TG-FileStreamBot](https://github.com/EverythingSuckz/TG-FileStreamBot)
@@ -87,8 +87,8 @@ docker run -d --name saveany-bot \
 - [tdl](https://github.com/iyear/tdl)
 - All the dependencies, contributors, sponsors and users.
 
-## 社区和关于作者
+## 社群與關於作者
 
-- [![通知群组](https://img.shields.io/badge/ProjectSaveAny-Group-blue)](https://t.me/ProjectSaveAny)
-- [![讨论区](https://img.shields.io/badge/Github-Discussion-white)](https://github.com/krau/saveany-bot/discussions)
-- [![个人频道](https://img.shields.io/badge/Krau-PersonalChannel-cyan)](https://t.me/acherkrau)
+- [![通知群組](https://img.shields.io/badge/ProjectSaveAny-Group-blue)](https://t.me/ProjectSaveAny)
+- [![討論區](https://img.shields.io/badge/Github-Discussion-white)](https://github.com/krau/saveany-bot/discussions)
+- [![個人頻道](https://img.shields.io/badge/Krau-PersonalChannel-cyan)](https://t.me/acherkrau)

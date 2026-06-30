@@ -1,5 +1,5 @@
 ---
-title: 介绍
+title: 介紹
 ---
 
 # Save Any Bot
@@ -9,29 +9,29 @@ title: 介绍
 ![](https://img.shields.io/github/v/release/krau/SaveAny-Bot?color=cyan&style=flat-square)
 ![](https://img.shields.io/github/downloads/krau/SaveAny-Bot/total?style=flat-square)
 
-把 Telegram 上的文件转存到多种存储端.
+將 Telegram 上的檔案轉存到多種儲存端.
 
 ## 🎯 特性
 
-- 支持文档/视频/图片/贴纸…甚至还有 [Telegraph](https://telegra.ph/)
-- 破解禁止保存的文件
-- 批量下载
-- 流式传输
-- 多用户使用
-- 基于存储规则的自动整理
-- 监听并自动转存指定聊天的消息, 支持过滤
-- 在不同存储端之间转存文件
-- 集成 yt-dlp, 从所支持的网站下载并转存媒体文件
-- 集成 Aria2, 支持直链/磁力下载和转存
-- 使用 js 编写解析器插件以转存任意网站的文件
-- 存储端支持:
+- 支援文件/影片/圖片/貼圖…甚至還有 [Telegraph](https://telegra.ph/)
+- 破解禁止儲存的檔案
+- 批次下載
+- 串流傳輸
+- 多使用者使用
+- 基於儲存規則的自動整理
+- 監聽並自動轉存指定聊天室的訊息, 支援過濾
+- 在不同儲存端之間轉存檔案
+- 整合 yt-dlp, 從所支援的網站下載並轉存媒體檔案
+- 整合 Aria2, 支援直鏈/磁力下載和轉存
+- 使用 js 撰寫解析器插件以轉存任意網站的檔案
+- 儲存端支援:
   - Alist
   - S3
   - WebDAV
-  - 本地磁盘
-  - Rclone (通过命令行调用)
-  - Telegram (重传回指定聊天)
+  - 本機磁碟
+  - Rclone (透過命令列呼叫)
+  - Telegram (重傳至指定聊天室)
 
-## [贡献者](https://github.com/krau/SaveAny-Bot/graphs/contributors)
+## [貢獻者](https://github.com/krau/SaveAny-Bot/graphs/contributors)
 
 ![Contributors](https://contrib.rocks/image?repo=krau/SaveAny-Bot&max=750&columns=20)

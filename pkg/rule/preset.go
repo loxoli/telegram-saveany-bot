@@ -19,27 +19,27 @@ var presetCategories = []PresetCategory{
 	{
 		Name:  "video",
 		Regex: `(?i)\.(mp4|mkv|ts|avi|flv|mov|webm|wmv|rmvb|m2ts)$`,
-		Dir:   "视频",
+		Dir:   "影片",
 	},
 	{
 		Name:  "image",
 		Regex: `(?i)\.(jpg|jpeg|png|gif|webp|bmp)$`,
-		Dir:   "图片",
+		Dir:   "圖片",
 	},
 	{
 		Name:  "audio",
 		Regex: `(?i)\.(mp3|flac|wav|aac|m4a|ogg)$`,
-		Dir:   "音频",
+		Dir:   "音訊",
 	},
 	{
 		Name:  "document",
 		Regex: `(?i)\.(pdf|doc|docx|xls|xlsx|ppt|pptx|txt|md|csv|epub|mobi|azw3|chm)$`,
-		Dir:   "文档",
+		Dir:   "文件",
 	},
 	{
 		Name:  "archive",
 		Regex: `(?i)\.(zip|rar|7z|tar|gz|bz2|xz|r\d{1,3}|z\d{1,3}|\d{3}|part\d+\.rar|7z\.\d{3})$`,
-		Dir:   "压缩包",
+		Dir:   "壓縮包",
 	},
 }
 
