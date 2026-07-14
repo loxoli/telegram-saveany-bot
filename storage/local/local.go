@@ -2,6 +2,7 @@ package local
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -10,15 +11,37 @@ import (
 
 	"github.com/charmbracelet/log"
 	"github.com/duke-git/lancet/v2/fileutil"
+	"github.com/dustin/go-humanize"
+	"github.com/krau/SaveAny-Bot/common/utils/fsutil"
 	config "github.com/krau/SaveAny-Bot/config/storage"
 	"github.com/krau/SaveAny-Bot/pkg/enums/ctxkey"
 	storenum "github.com/krau/SaveAny-Bot/pkg/enums/storage"
 	"github.com/krau/SaveAny-Bot/pkg/storagetypes"
 )
 
+// minFreeSpace 是本地儲存下載前要求的最低可用空間 (1024 MiB)。
+// 可用空間必須「大於」此值才允許下載，否則拒絕。
+const minFreeSpace uint64 = 1024 * 1024 * 1024
+
+// ErrInsufficientSpace 表示本地儲存所在磁碟可用空間不足。
+var ErrInsufficientSpace = errors.New("insufficient free disk space")
+
 type Local struct {
 	config config.LocalStorageConfig
 	logger *log.Logger
+}
+
+// checkFreeSpace 檢查儲存所在磁碟的可用空間是否大於 minFreeSpace。
+func (l *Local) checkFreeSpace() error {
+	avail, err := fsutil.AvailableSpace(l.config.BasePath)
+	if err != nil {
+		return fmt.Errorf("failed to check available disk space: %w", err)
+	}
+	if avail <= minFreeSpace {
+		return fmt.Errorf("%w: 可用空間 %s，需大於 %s",
+			ErrInsufficientSpace, humanize.IBytes(avail), humanize.IBytes(minFreeSpace))
+	}
+	return nil
 }
 
 func (l *Local) Init(ctx context.Context, cfg config.StorageConfig) error {
@@ -51,6 +74,9 @@ func (l *Local) JoinStoragePath(path string) string {
 }
 
 func (l *Local) Save(ctx context.Context, r io.Reader, storagePath string) error {
+	if err := l.checkFreeSpace(); err != nil {
+		return err
+	}
 	l.logger.Infof("Saving file to %s", storagePath)
 	storagePath = l.JoinStoragePath(storagePath)
 
