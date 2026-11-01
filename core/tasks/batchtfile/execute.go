@@ -12,9 +12,11 @@ import (
 	"github.com/krau/SaveAny-Bot/common/tdler"
 	"github.com/krau/SaveAny-Bot/common/utils/fsutil"
 	"github.com/krau/SaveAny-Bot/common/utils/ioutil"
+	"github.com/krau/SaveAny-Bot/common/utils/retryutil"
 	"github.com/krau/SaveAny-Bot/config"
 	"github.com/krau/SaveAny-Bot/pkg/enums/ctxkey"
 	"github.com/krau/SaveAny-Bot/pkg/taskevent"
+	"github.com/krau/SaveAny-Bot/storage/local"
 	"golang.org/x/sync/errgroup"
 )
 
@@ -125,7 +127,7 @@ func (t *Task) processElement(ctx context.Context, elem TaskElement) error {
 		return fmt.Errorf("failed to get file stat: %w", err)
 	}
 	vctx := context.WithValue(ctx, ctxkey.ContentLength, fileStat.Size())
-	err = retry.Retry(func() error {
+	err = retryutil.Retry(func() error {
 		var file *os.File
 		file, err = os.Open(elem.localPath)
 		if err != nil {
@@ -137,6 +139,6 @@ func (t *Task) processElement(ctx context.Context, elem TaskElement) error {
 			return err
 		}
 		return nil
-	}, retry.Context(vctx), retry.RetryTimes(uint(config.C().Retry)))
+	}, local.IsOutOfSpace, retry.Context(vctx), retry.RetryTimes(uint(config.C().Retry)))
 	return err
 }

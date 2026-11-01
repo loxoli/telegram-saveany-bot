@@ -8,6 +8,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"syscall"
 
 	"github.com/charmbracelet/log"
 	"github.com/duke-git/lancet/v2/fileutil"
@@ -25,6 +26,12 @@ const minFreeSpace uint64 = 1024 * 1024 * 1024
 
 // ErrInsufficientSpace 表示本地儲存所在磁碟可用空間不足。
 var ErrInsufficientSpace = errors.New("insufficient free disk space")
+
+// IsOutOfSpace 判斷 err 是否為磁碟空間不足：Save 的預先檢查 (ErrInsufficientSpace)，
+// 或寫入時遇到的 ENOSPC（例如寫暫存檔時磁碟已滿）。這類錯誤重試也不會成功。
+func IsOutOfSpace(err error) bool {
+	return errors.Is(err, ErrInsufficientSpace) || errors.Is(err, syscall.ENOSPC)
+}
 
 type Local struct {
 	config config.LocalStorageConfig

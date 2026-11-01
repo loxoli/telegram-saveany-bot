@@ -13,10 +13,12 @@ import (
 	"github.com/duke-git/lancet/v2/retry"
 	"github.com/krau/SaveAny-Bot/common/utils/fsutil"
 	"github.com/krau/SaveAny-Bot/common/utils/ioutil"
+	"github.com/krau/SaveAny-Bot/common/utils/retryutil"
 	"github.com/krau/SaveAny-Bot/config"
 	"github.com/krau/SaveAny-Bot/pkg/enums/ctxkey"
 	"github.com/krau/SaveAny-Bot/pkg/parser"
 	"github.com/krau/SaveAny-Bot/pkg/taskevent"
+	"github.com/krau/SaveAny-Bot/storage/local"
 	"golang.org/x/sync/errgroup"
 )
 
@@ -70,7 +72,7 @@ func (t *Task) Execute(ctx context.Context) error {
 
 func (t *Task) processResource(ctx context.Context, resource parser.Resource) error {
 	logger := log.FromContext(ctx)
-	err := retry.Retry(func() error {
+	err := retryutil.Retry(func() error {
 		req, err := http.NewRequestWithContext(ctx, http.MethodGet, resource.URL, nil)
 		if err != nil {
 			return err
@@ -138,7 +140,7 @@ func (t *Task) processResource(ctx context.Context, resource parser.Resource) er
 			return fmt.Errorf("failed to seek cache file for resource %s: %w", resource.URL, err)
 		}
 		return t.Stor.Save(ctx, cacheFile, path.Join(t.StorPath, resource.Filename))
-	}, retry.Context(ctx), retry.RetryTimes(uint(config.C().Retry)))
+	}, local.IsOutOfSpace, retry.Context(ctx), retry.RetryTimes(uint(config.C().Retry)))
 	if ctx.Err() != nil {
 		return ctx.Err()
 	}
