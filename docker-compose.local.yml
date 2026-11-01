@@ -11,3 +11,9 @@ services:
     # 使用 host 模式以便访问宿主机服务 (如代理)
     # 如果你对 Docker 网络模式熟悉, 可以自行修改
     network_mode: host
+    # log 輪替：單檔上限 10MB，保留 3 個檔，避免 log 無限成長
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
