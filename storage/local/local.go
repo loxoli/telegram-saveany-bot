@@ -20,9 +20,17 @@ import (
 	"github.com/krau/SaveAny-Bot/pkg/storagetypes"
 )
 
-// minFreeSpace 是本地儲存下載前要求的最低可用空間 (1024 MiB)。
-// 可用空間必須「大於」此值才允許下載，否則拒絕。
-const minFreeSpace uint64 = 1024 * 1024 * 1024
+const (
+	// minFreeSpaceBeforeDownload 是開始下載前要求的最低可用空間 (1500 MiB)，
+	// 不足時不下載，直接回報錯誤。
+	minFreeSpaceBeforeDownload uint64 = 1500 * 1024 * 1024
+	// minFreeSpace 是下載完成、寫入儲存前要求的最低可用空間 (1024 MiB)，
+	// 不足時放棄該檔案。
+	minFreeSpace uint64 = 1024 * 1024 * 1024
+)
+
+// availableSpace 查詢磁碟可用空間，測試時可替換。
+var availableSpace = fsutil.AvailableSpace
 
 // ErrInsufficientSpace 表示本地儲存所在磁碟可用空間不足。
 var ErrInsufficientSpace = errors.New("insufficient free disk space")
@@ -38,17 +46,23 @@ type Local struct {
 	logger *log.Logger
 }
 
-// checkFreeSpace 檢查儲存所在磁碟的可用空間是否大於 minFreeSpace。
-func (l *Local) checkFreeSpace() error {
-	avail, err := fsutil.AvailableSpace(l.config.BasePath)
+// checkFreeSpace 檢查儲存所在磁碟的可用空間，小於 min 時回傳 ErrInsufficientSpace。
+// stage 用於錯誤訊息，說明是哪個階段的檢查。
+func (l *Local) checkFreeSpace(min uint64, stage string) error {
+	avail, err := availableSpace(l.config.BasePath)
 	if err != nil {
 		return fmt.Errorf("failed to check available disk space: %w", err)
 	}
-	if avail <= minFreeSpace {
-		return fmt.Errorf("%w: 可用空間 %s，需大於 %s",
-			ErrInsufficientSpace, humanize.IBytes(avail), humanize.IBytes(minFreeSpace))
+	if avail < min {
+		return fmt.Errorf("%w: %s可用空間 %s，需至少 %s",
+			ErrInsufficientSpace, stage, humanize.IBytes(avail), humanize.IBytes(min))
 	}
 	return nil
+}
+
+// CheckSpaceBeforeDownload 在開始下載前檢查可用空間，小於 1500 MiB 時回傳 ErrInsufficientSpace。
+func (l *Local) CheckSpaceBeforeDownload() error {
+	return l.checkFreeSpace(minFreeSpaceBeforeDownload, "下載前")
 }
 
 func (l *Local) Init(ctx context.Context, cfg config.StorageConfig) error {
@@ -81,7 +95,7 @@ func (l *Local) JoinStoragePath(path string) string {
 }
 
 func (l *Local) Save(ctx context.Context, r io.Reader, storagePath string) error {
-	if err := l.checkFreeSpace(); err != nil {
+	if err := l.checkFreeSpace(minFreeSpace, "寫入前"); err != nil {
 		return err
 	}
 	l.logger.Infof("Saving file to %s", storagePath)

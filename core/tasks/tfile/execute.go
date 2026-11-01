@@ -13,6 +13,7 @@ import (
 	"github.com/krau/SaveAny-Bot/common/utils/retryutil"
 	"github.com/krau/SaveAny-Bot/config"
 	"github.com/krau/SaveAny-Bot/pkg/enums/ctxkey"
+	"github.com/krau/SaveAny-Bot/storage"
 	"github.com/krau/SaveAny-Bot/storage/local"
 )
 
@@ -20,6 +21,12 @@ func (t *Task) Execute(ctx context.Context) error {
 	logger := log.FromContext(ctx).WithPrefix(fmt.Sprintf("file[%s]", t.File.Name()))
 	if t.Progress != nil {
 		t.Progress.OnStart(ctx, t)
+	}
+	if err := storage.CheckSpaceBeforeDownload(t.Storage); err != nil {
+		if t.Progress != nil {
+			t.Progress.OnDone(ctx, t, err)
+		}
+		return err
 	}
 	if t.stream {
 		return executeStream(ctx, t)

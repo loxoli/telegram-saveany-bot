@@ -43,6 +43,20 @@ type StorageReadable interface {
 	OpenFile(ctx context.Context, filePath string) (io.ReadCloser, int64, error)
 }
 
+// StorageSpaceCheckable 表示會在下載前檢查磁碟可用空間的儲存（目前只有 local）
+type StorageSpaceCheckable interface {
+	Storage
+	CheckSpaceBeforeDownload() error
+}
+
+// CheckSpaceBeforeDownload 在開始下載前檢查 stor 的可用空間；不需要檢查的儲存直接通過。
+func CheckSpaceBeforeDownload(stor Storage) error {
+	if sc, ok := stor.(StorageSpaceCheckable); ok {
+		return sc.CheckSpaceBeforeDownload()
+	}
+	return nil
+}
+
 var Storages = make(map[string]Storage)
 
 type StorageConstructor func() Storage

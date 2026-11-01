@@ -79,6 +79,10 @@ func (t *Task) processElement(ctx context.Context, elem TaskElement) error {
 		return fmt.Errorf("source storage %s does not support reading", elem.SourceStorage.Name())
 	}
 
+	if err := storage.CheckSpaceBeforeDownload(elem.TargetStorage); err != nil {
+		return err
+	}
+
 	logger.Info("Opening file from source storage")
 	reader, size, err := readableStorage.OpenFile(ctx, elem.SourcePath)
 	if err != nil {

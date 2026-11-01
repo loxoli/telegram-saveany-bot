@@ -13,6 +13,7 @@ import (
 	"github.com/krau/SaveAny-Bot/common/utils/retryutil"
 	"github.com/krau/SaveAny-Bot/config"
 	"github.com/krau/SaveAny-Bot/pkg/taskevent"
+	"github.com/krau/SaveAny-Bot/storage"
 	"github.com/krau/SaveAny-Bot/storage/local"
 	"golang.org/x/sync/errgroup"
 )
@@ -52,6 +53,9 @@ func (t *Task) Execute(ctx context.Context) error {
 }
 
 func (t *Task) processPic(ctx context.Context, picUrl string, index int) error {
+	if err := storage.CheckSpaceBeforeDownload(t.Stor); err != nil {
+		return err
+	}
 	retryOpts := []retry.Option{
 		retry.Context(ctx),
 		retry.RetryTimes(uint(config.C().Retry)),

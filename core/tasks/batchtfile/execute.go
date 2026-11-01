@@ -16,6 +16,7 @@ import (
 	"github.com/krau/SaveAny-Bot/config"
 	"github.com/krau/SaveAny-Bot/pkg/enums/ctxkey"
 	"github.com/krau/SaveAny-Bot/pkg/taskevent"
+	"github.com/krau/SaveAny-Bot/storage"
 	"github.com/krau/SaveAny-Bot/storage/local"
 	"golang.org/x/sync/errgroup"
 )
@@ -57,6 +58,9 @@ func (t *Task) Execute(ctx context.Context) error {
 
 func (t *Task) processElement(ctx context.Context, elem TaskElement) error {
 	logger := log.FromContext(ctx).WithPrefix(fmt.Sprintf("file[%s]", elem.File.Name()))
+	if err := storage.CheckSpaceBeforeDownload(elem.Storage); err != nil {
+		return err
+	}
 	if elem.stream {
 		pr, pw := io.Pipe()
 		defer pr.Close()

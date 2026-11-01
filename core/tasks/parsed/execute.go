@@ -18,6 +18,7 @@ import (
 	"github.com/krau/SaveAny-Bot/pkg/enums/ctxkey"
 	"github.com/krau/SaveAny-Bot/pkg/parser"
 	"github.com/krau/SaveAny-Bot/pkg/taskevent"
+	"github.com/krau/SaveAny-Bot/storage"
 	"github.com/krau/SaveAny-Bot/storage/local"
 	"golang.org/x/sync/errgroup"
 )
@@ -72,6 +73,9 @@ func (t *Task) Execute(ctx context.Context) error {
 
 func (t *Task) processResource(ctx context.Context, resource parser.Resource) error {
 	logger := log.FromContext(ctx)
+	if err := storage.CheckSpaceBeforeDownload(t.Stor); err != nil {
+		return err
+	}
 	err := retryutil.Retry(func() error {
 		req, err := http.NewRequestWithContext(ctx, http.MethodGet, resource.URL, nil)
 		if err != nil {

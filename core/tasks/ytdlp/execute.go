@@ -13,6 +13,7 @@ import (
 
 	"github.com/krau/SaveAny-Bot/config"
 	"github.com/krau/SaveAny-Bot/pkg/enums/ctxkey"
+	"github.com/krau/SaveAny-Bot/storage"
 )
 
 // Execute implements core.Executable.
@@ -22,6 +23,13 @@ func (t *Task) Execute(ctx context.Context) error {
 
 	if t.Progress != nil {
 		t.Progress.OnStart(ctx, t)
+	}
+
+	if err := storage.CheckSpaceBeforeDownload(t.Storage); err != nil {
+		if t.Progress != nil {
+			t.Progress.OnDone(ctx, t, err)
+		}
+		return err
 	}
 
 	// Create temporary directory for downloads
