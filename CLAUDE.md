@@ -16,6 +16,7 @@
   2. `docker compose -f docker-compose.local.yml up -d --build`
   - `docker-compose.local.yml` 含 `build: .`，會用 Dockerfile 編譯當前 checkout 的程式碼。
   - ⚠️ **不要使用** `docker-compose.yml`（預設檔）/ `docker compose up -d --build`：該檔直接 pull 官方映像 `ghcr.io/krau/saveany-bot:latest`，`--build` 為空操作，**不會套用本地程式碼**。
+  - ⚠️ **編譯前先確認磁碟空間**：沒有快取時，完整編譯約需 3～4 GB。原因有兩個：`FROM golang:alpine` 沒有固定版本，抓到新版就會整個重編；模組在兩個快取掛載裡各下載一次。2026-11-01 就曾因此把主機磁碟塞滿，導致編譯失敗。空間吃緊時，建議先單獨執行 `docker compose -f docker-compose.local.yml build`，邊編譯邊用 `df` 監控，編譯成功後再 `up -d`。
 - **敏感檔案**:
   - `config.toml`：保密，不可入版本庫（已在 `.gitignore`），應備份
   - `data/`：含 SQLite 資料庫（已在 `.gitignore`），應規劃備份
