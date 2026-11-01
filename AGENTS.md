@@ -6,7 +6,7 @@ This document provides essential information for AI coding agents working on the
 
 SaveAny-Bot is a Telegram bot written in Go that saves files/messages from Telegram and various websites to multiple storage backends (local, S3, MinIO, WebDAV, AList, Telegram). It features a plugin system for parsing web content and extensible storage backends.
 
-**Tech Stack**: Go 1.24.2, gotd/td (Telegram MTProto), Cobra (CLI), Viper (config), GORM (ORM), SQLite, Goja (JS runtime), Playwright (browser automation)
+**Tech Stack**: Go 1.25, gotd/td (Telegram MTProto), Cobra (CLI), Viper (config), GORM (ORM), SQLite, Goja (JS runtime), Playwright (browser automation)
 
 ## Build & Test Commands
 
@@ -20,7 +20,11 @@ go run ./cmd
 
 # Docker build (multi-stage, Alpine-based)
 docker build -t saveany-bot .
-docker compose up -d
+
+# Build from local source and run (use docker-compose.local.yml; see CLAUDE.md "部署")
+# NOTE: plain `docker compose up -d` uses docker-compose.yml, which pulls the
+# official image ghcr.io/krau/saveany-bot:latest and ignores local code changes.
+docker compose -f docker-compose.local.yml up -d --build
 ```
 
 ### Test
