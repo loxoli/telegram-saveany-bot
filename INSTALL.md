@@ -16,4 +16,11 @@
   export PATH=$GOROOT/bin:$PATH
   ```
 
-- **備註**：本工作階段將其安裝於暫存（scratchpad）目錄，非系統全域安裝。若要長期使用，建議改裝至 `/usr/local/go` 並將 `PATH` 寫入 shell 設定。
+- **備註**：2026-06 的工作階段將其安裝於暫存（scratchpad）目錄，工作階段結束後就消失了。
+- **2026-11-01 重新安裝**：改裝在使用者目錄 `~/.local/go`（不需 root，會保留下來）。`GOPATH` 使用預設的 `~/go`，模組快取已在那裡。
+
+  ```bash
+  curl -sSL -o go.tgz https://go.dev/dl/go1.25.0.linux-amd64.tar.gz
+  tar -C ~/.local -xzf go.tgz
+  export PATH=$HOME/.local/go/bin:$PATH
+  ```
